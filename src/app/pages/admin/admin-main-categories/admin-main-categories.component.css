@@ -1,0 +1,239 @@
+.dk-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0;
+}
+
+/* Backdrop + modal shell */
+.dk-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .55);
+    display: grid;
+    place-items: center;
+    z-index: 2000;
+}
+
+.dk-modal {
+    width: 100%;
+    max-width: 760px;
+    background: #0e639c;
+    color: #181c19;
+    border: 1px solid #1f2a24;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, .4);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    animation: dk-pop .14s ease-out;
+}
+
+.dk-modal-sm {
+    max-width: 420px;
+}
+
+.dk-modal-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: #0e639c;
+    border-bottom: 1px solid #1f2a24;
+    color: #fff
+}
+
+.dk-modal-body {
+    padding: 16px;
+    display: grid;
+    gap: 14px;
+}
+
+.dk-modal-footer {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px solid #1f2a24;
+}
+
+/* Close button (X) */
+.dk-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: transparent;
+    color: inherit;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.dk-close-btn:hover {
+    background: rgba(255, 255, 255, .08);
+}
+
+/* Form fields */
+.field {
+    display: grid;
+    gap: 6px;
+}
+
+.field>label {
+    font-size: 12px;
+    color: #040e09;
+}
+
+.field>input,
+.field>textarea,
+.field>select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #1f2a24;
+    border-radius: 10px;
+    background: #dbdedc;
+    color: #1b231d;
+    outline: none;
+}
+
+.field>textarea {
+    resize: vertical;
+    min-height: 80px;
+    background: #dbdedc;
+    color: #1b231d;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* File upload row */
+.file-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hidden-file {
+    display: none;
+}
+
+.muted {
+    color: #a6b4ad;
+    font-size: 12px;
+}
+
+/* Preview card */
+.dk-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid #1f2a24;
+    border-radius: 12px;
+    background: #dbdedc;
+}
+
+.dk-preview img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #1f2a24;
+}
+
+.dk-avatar {
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .06);
+    font-weight: 700;
+}
+
+.dk-meta .title {
+    font-weight: 600;
+}
+
+.dk-meta .desc {
+    font-size: 12px;
+    color: #a6b4ad;
+}
+
+/* Buttons (local styles so Bootstrap isn’t required) */
+.btn {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #111827;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #f9fafb;
+}
+
+.btn.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.btn-primary {
+    border-color: #4f80ff;
+    color: #fff;
+    background: linear-gradient(180deg, #3f7dfb, #2867f6);
+}
+
+.btn-light {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+}
+
+.btn-danger {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.btn.primary {
+    border-color: #4f80ff;
+    color: #fff;
+    background: linear-gradient(180deg, #3f7dfb, #2867f6);
+}
+
+/* for Save in footer */
+.btn.ghost {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+}
+
+/* for Cancel in footer */
+
+/* Action buttons inside grid */
+.ag-theme-balham .dk-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Pop animation */
+@keyframes dk-pop {
+    from {
+        transform: translateY(6px) scale(.98);
+        opacity: .6;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}

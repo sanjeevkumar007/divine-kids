@@ -1,0 +1,70 @@
+<!-- collapse toggle (checkbox hack) -->
+<input id="admin-nav-toggle" class="admin-nav-toggle" type="checkbox" hidden>
+
+<div class="admin-wrap">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="logo">⚙️</span>
+            <span class="label">Admin Panel</span>
+        </div>
+
+        <nav class="nav">
+            <a routerLink="/admin/main-categories" class="nav-link" data-tip="Main Categories">
+                <span class="icon">🏷️</span><span class="label">Main Categories</span>
+            </a>
+            <a routerLink="/admin/categories" class="nav-link" data-tip="Categories">
+                <span class="icon">🗂️</span><span class="label">Categories</span>
+            </a>
+            <a routerLink="/admin/products" class="nav-link" data-tip="Products">
+                <span class="icon">📦</span><span class="label">Products</span>
+            </a>
+
+            <div class="section-title"><span class="label">Other</span></div>
+            <a routerLink="/home" class="nav-link" data-tip="Back to Site">
+                <span class="icon">🏠</span><span class="label">Back to Site</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="content">
+        <header class="topbar">
+            <label class="toggle-btn" for="admin-nav-toggle" title="Toggle sidebar">
+                <span></span><span></span><span></span>
+            </label>
+            <h2 class="page-title">Admin</h2>
+            <div class="spacer"></div>
+
+            <div (click)="logout()"><span class="icon-wrap">
+                    <!-- Power icon (SVG) -->
+                    <svg class="power" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path d="M6.8 6.8a7 7 0 1 0 10.4 0" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span class="pulse"></span>
+                </span>
+                <span class="text">Logout</span>
+            </div>
+
+            <button type="button" class="logout-btn fancy" (click)="logout()" aria-label="Logout">
+                <span class="icon-wrap">
+                    <!-- Power icon (SVG) -->
+                    <svg class="power" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path d="M6.8 6.8a7 7 0 1 0 10.4 0" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span class="pulse"></span>
+                </span>
+                <span class="text">Logout</span>
+            </button>
+        </header>
+
+        <section class="page-body">
+            <router-outlet></router-outlet>
+        </section>
+        <app-footer></app-footer>
+    </main>
+</div>

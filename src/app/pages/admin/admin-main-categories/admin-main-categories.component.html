@@ -1,0 +1,68 @@
+<h2>Main Categories</h2>
+
+<div class="dk-toolbar">
+    <button type="button" class="btn btn-primary" (click)="openAddModal()">+ Add Main Category</button>
+</div>
+
+<ag-grid-angular class="ag-theme-balham" style="width: 100%; height: 60vh; min-height: 500px;" [rowData]="rowData"
+    [theme]="'legacy'" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [pagination]="true"
+    [paginationPageSize]="10" (gridReady)="onGridReady($event)">
+</ag-grid-angular>
+
+<!-- Add/Edit Modal -->
+<div class="dk-modal-backdrop" *ngIf="showFormModal">
+    <form class="dk-modal" (submit)="saveMainCategory($event)">
+        <div class="dk-modal-header">
+            <h5 class="m-0">{{ isEditForm ? 'Edit Main Category' : 'Add Main Category' }}</h5>
+            <button type="button" class="dk-close-btn" (click)="closeFormModal()">×</button>
+        </div>
+        <div class="dk-modal-body">
+            <div class="field">
+                <label>Name</label>
+                <input name="name" [(ngModel)]="form.name" required maxlength="80">
+            </div>
+            <div class="field">
+                <label>Description</label>
+                <textarea name="description" [(ngModel)]="form.description" rows="3" maxlength="300"></textarea>
+            </div>
+            <div class="two-col">
+                <div class="field">
+                    <label>Upload Image</label>
+                    <div class="file-row">
+                        <input #fileInput type="file" class="hidden-file" accept="image/*"
+                            (change)="onFileSelected($event)">
+                        <button type="button" class="btn btn-sm" (click)="fileInput.click()">Choose File</button>
+                        <span class="muted">{{ selectedFile?.name || 'PNG/JPG up to 2 MB' }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dk-preview">
+                <img *ngIf="previewUrl || form.imageUrl" [src]="previewUrl || form.imageUrl" alt="Preview">
+                <div *ngIf="!(previewUrl || form.imageUrl)" class="dk-avatar">{{ (form.name || '?') }}</div>
+                <div class="dk-meta">
+                    <div class="title">{{ form.name || 'Name' }}</div>
+                    <div class="desc">{{ form.description || 'Description…' }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="dk-modal-footer">
+            <button type="button" class="btn btn-light" (click)="closeFormModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!(form.name && form.name.trim())">Save</button>
+        </div>
+    </form>
+</div>
+
+<!-- Delete Confirm -->
+<div class="dk-modal-backdrop" *ngIf="showDeleteModal">
+    <div class="dk-modal dk-modal-sm">
+        <div class="dk-modal-header">
+            <h5 class="m-0">Confirm Delete</h5>
+            <button type="button" class="dk-close-btn" (click)="showDeleteModal=false">×</button>
+        </div>
+        <div class="dk-modal-body">Delete this main category?</div>
+        <div class="dk-modal-footer">
+            <button type="button" class="btn btn-light" (click)="showDeleteModal=false">Cancel</button>
+            <button type="button" class="btn btn-danger" (click)="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>

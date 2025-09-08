@@ -1,0 +1,106 @@
+<!-- Loading -->
+<div class="pd-wrap" *ngIf="loading">
+    <div class="sk-line"></div>
+    <div class="sk-shell">
+        <div class="sk-box"></div>
+        <div class="sk-box thin"></div>
+    </div>
+</div>
+
+<!-- Loaded -->
+<div class="pd-wrap" *ngIf="!loading && product">
+    <div class="pd-head">
+        <nav class="crumbs">
+            <a routerLink="/">Home</a>
+            <span *ngIf="product.categoryId">› <a [routerLink]="['/category', product.categoryId]">Category</a></span>
+            › <span class="current">{{ product.name }}</span>
+        </nav>
+        <h1 class="pd-title">{{ product.name }}</h1>
+    </div>
+
+    <div class="pd-layout">
+        <!-- Gallery -->
+        <section class="pd-gallery">
+            <figure class="pd-hero">
+                <img [src]="activeImage" [alt]="product.name" (error)="activeImage = placeholder">
+                <div class="pd-badges" *ngIf="product.badges?.length">
+                    <span *ngFor="let b of product.badges" class="badge">{{ b }}</span>
+                </div>
+            </figure>
+            <div class="pd-thumbs" *ngIf="gallery.length > 1">
+                <button *ngFor="let g of gallery; let i = index" (click)="setActive(g)"
+                    [class.active]="g===activeImage">
+                    <img [src]="g" [alt]="product.name + ' ' + (i+1)" (error)="onThumbErr($event)">
+                </button>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="pd-summary">
+            <div class="price-row">
+                <span class="price">${{ product.price }}</span>
+                <span class="stock" [class.in]="product.inStock" [class.out]="!product.inStock">
+                    {{ product.inStock ? 'In Stock' : 'Out' }}
+                </span>
+            </div>
+
+            <div class="rating-row" *ngIf="product.rating">
+                <div class="stars"><span class="fill" [style.width.%]="(product.rating||0)*20"></span></div>
+                <span class="rv">({{ product.reviews || 0 }})</span>
+            </div>
+
+            <p class="short" *ngIf="product.description">
+                {{ product.description | slice:0:180 }}<span *ngIf="(product.description||'').length>180">…</span>
+            </p>
+
+            <div class="mini-meta">
+                <div *ngIf="product.weightKg"><label>Weight</label><span>{{ product.weightKg }} kg</span></div>
+                <div *ngIf="product.widthCm"><label>Width</label><span>{{ product.widthCm }} cm</span></div>
+                <div *ngIf="product.heightCm"><label>Height</label><span>{{ product.heightCm }} cm</span></div>
+            </div>
+
+            <div class="act-bar">
+                <button class="btn primary" [disabled]="!product.inStock">Add to Cart</button>
+                <button class="btn ghost">Compare</button>
+            </div>
+
+            <!-- Clean accordion for extra info -->
+            <div class="pd-acc" *ngIf="product.description || product.specs">
+                <button class="acc-btn" (click)="toggleAcc('desc')" [class.open]="acc.desc">
+                    Description
+                    <span class="chevron"></span>
+                </button>
+                <div class="acc-panel" *ngIf="acc.desc">
+                    <div class="prose" [innerHTML]="product.description || 'No description.'"></div>
+                </div>
+
+                <button class="acc-btn" (click)="toggleAcc('spec')" [class.open]="acc.spec">
+                    Specifications
+                    <span class="chevron"></span>
+                </button>
+                <div class="acc-panel" *ngIf="acc.spec">
+                    <table class="spec" *ngIf="product.specs; else noSpecs">
+                        <tr *ngFor="let s of product.specs | keyvalue">
+                            <th>{{ s.key }}</th>
+                            <td>{{ s.value }}</td>
+                        </tr>
+                    </table>
+                    <ng-template #noSpecs>No specifications.</ng-template>
+                </div>
+
+                <button class="acc-btn" (click)="toggleAcc('rev')" [class.open]="acc.rev">
+                    Reviews
+                    <span class="chevron"></span>
+                </button>
+                <div class="acc-panel" *ngIf="acc.rev">
+                    <p>No reviews yet.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Not found -->
+<div class="pd-wrap" *ngIf="!loading && !product">
+    <p>Product not found.</p>
+</div>

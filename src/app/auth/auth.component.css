@@ -1,0 +1,228 @@
+.auth-bg {
+    min-height: 100dvh;
+    /* dynamic viewport height (better with toolbars) */
+    max-height: none;
+    overflow-y: auto;
+    /* enable vertical scroll */
+    -webkit-overflow-scrolling: touch;
+    padding: 48px 20px;
+    background:
+        radial-gradient(circle at 18% 22%, #55c2f0 0%, #1f89c9 45%, #083e63 100%);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    font-family: system-ui, Arial, sans-serif;
+    color: #183323;
+}
+
+.auth-shell {
+    width: 100%;
+    max-width: 640px;
+    background: rgba(255, 255, 255, .86);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 28px;
+    padding: 28px 34px 40px;
+    box-shadow: 0 18px 42px -16px rgba(0, 0, 0, .35), 0 4px 16px -4px rgba(0, 0, 0, .25);
+    position: relative;
+    overflow: hidden;
+    margin: 32px auto 48px;
+    /* give top/bottom breathing so focus isn’t clipped */
+}
+
+.tabs {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #e3eef5;
+    border-radius: 18px;
+    margin-bottom: 28px;
+    overflow: hidden;
+}
+
+.tabs button {
+    appearance: none;
+    border: none;
+    background: none;
+    padding: 14px 6px;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .6px;
+    cursor: pointer;
+    color: #275733;
+    position: relative;
+    z-index: 2;
+    transition: color .35s;
+}
+
+.tabs button.active {
+    color: #0d3320;
+}
+
+.tabs .glow {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: calc(50% - 8px);
+    height: calc(100% - 8px);
+    background: linear-gradient(135deg, #34a9e9, #177bb9 60%, #0a5686);
+    border-radius: 14px;
+    box-shadow: 0 6px 18px -6px rgba(0, 0, 0, .35), 0 2px 8px -2px rgba(0, 0, 0, .25);
+    transition: transform .45s cubic-bezier(.75, .05, .25, .95);
+}
+
+.tabs .glow.right {
+    transform: translateX(100%);
+}
+
+.title {
+    margin: 0 0 4px;
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.1;
+    background: linear-gradient(90deg, #0c4063, #166da0);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.subtitle {
+    margin: 0 0 18px;
+    font-size: .9rem;
+    color: #435d4b;
+    font-weight: 500;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width:640px) {
+    .row-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-shell {
+        padding: 26px 22px 36px;
+    }
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    letter-spacing: .4px;
+    font-weight: 600;
+    color: #2a5038;
+}
+
+.field input {
+    font: 500 14px/1.2 system-ui, Arial;
+    padding: 12px 14px;
+    border: 1px solid #cfdad3;
+    border-radius: 12px;
+    background: #f7faf8;
+    outline: none;
+    transition: border-color .25s, background .25s, box-shadow .25s;
+}
+
+.field input:focus {
+    border-color: #166da0;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(22, 109, 160, .33);
+}
+
+.field small {
+    font-weight: 500;
+    color: #b03a2a;
+    font-size: 11px;
+    letter-spacing: .3px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.btn {
+    flex: 1;
+    padding: 13px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    border-radius: 14px;
+    border: 1px solid #b8c9c0;
+    background: #fff;
+    color: #1e4c30;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background .3s, color .3s, border-color .3s;
+}
+
+.btn:hover {
+    background: #eef6f1;
+}
+
+.btn.primary {
+    background: linear-gradient(135deg, #2389d6, #14639b);
+    color: #fff;
+    border: none;
+    box-shadow: 0 6px 20px -6px rgba(5, 55, 86, .55);
+}
+
+.btn.primary:hover {
+    background: linear-gradient(135deg, #2996e4, #166da8);
+}
+
+.btn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+::-webkit-input-placeholder {
+    color: #889d90;
+}
+
+::placeholder {
+    color: #7f97a6;
+}
+
+/* subtle floating blobs */
+.auth-shell::before,
+.auth-shell::after {
+    content: "";
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    background: radial-gradient(circle at 30% 30%, rgba(52, 169, 233, .55), rgba(52, 169, 233, 0) 70%);
+    top: -60px;
+    right: -40px;
+    pointer-events: none;
+    filter: blur(4px);
+}
+
+.auth-shell::after {
+    top: auto;
+    bottom: -70px;
+    left: -50px;
+    background: radial-gradient(circle at 40% 40%, rgba(24, 115, 176, .45), rgba(24, 115, 176, 0) 70%);
+}
+
+/* Prevent body/container from disabling scroll on this route */
+:host,
+:host ::ng-deep .app-main {
+    overflow: visible;
+}

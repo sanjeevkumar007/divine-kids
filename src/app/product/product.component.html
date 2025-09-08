@@ -1,0 +1,86 @@
+<div class="page-wrap">
+    <header class="page-header">
+        <div class="title-group">
+            <h1 class="title">Educational Technology</h1>
+            <div class="breadcrumbs">Home › Shop By Learning Model › Makerspace › Educational Technology</div>
+        </div>
+
+        <div class="toolbar">
+            <label class="control">
+                <span>Sort</span>
+                <select [(ngModel)]="sortBy">
+                    <option value="relevance">Relevance</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                </select>
+            </label>
+
+            <label class="control">
+                <span>Items Per Page</span>
+                <select [(ngModel)]="pageSize">
+                    <option [ngValue]="24">24</option>
+                    <option [ngValue]="48">48</option>
+                    <option [ngValue]="96">96</option>
+                </select>
+            </label>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- Sidebar filters -->
+        <aside class="filters">
+            <div class="filter-card">
+                <div class="filter-title">Categories</div>
+                <div class="parent-link">‹ Makerspace</div>
+                <div class="current">Educational Technology</div>
+            </div>
+
+            <div class="filter-card">
+                <div class="filter-title">Filters</div>
+                <div class="filter-group">
+                    <div class="group-title">Color</div>
+                    <label *ngFor="let c of allColors" class="check">
+                        <input type="checkbox" [checked]="selectedColors.has(c)" (change)="toggleColor(c)" />
+                        <span>{{ c }}</span>
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Grid -->
+        <main class="grid">
+            <div *ngFor="let p of filtered" class="card">
+                <div class="img-wrap">
+                    <img [src]="p.imageUrl" [alt]="p.name" loading="lazy" />
+                    <div class="badges" *ngIf="p.badges?.length">
+                        <span *ngFor="let b of p.badges" class="badge" [attr.data-type]="b">{{ b }}</span>
+                    </div>
+                </div>
+
+                <div class="meta">
+                    <h3 class="name">{{ p.name }}</h3>
+                    <div class="rating" *ngIf="p.rating">
+                        <span class="stars" [style.--value.%]="(p.rating || 0) * 20"></span>
+                        <span class="reviews">({{ p.reviews || 0 }})</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="price">${{ p.price }}</span>
+                        <span class="stock" [class.in]="p.inStock" [class.out]="!p.inStock">
+                            {{ p.inStock ? 'In stock' : 'Out of stock' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn ghost">Compare</button>
+                    <button class="btn primary">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Empty state -->
+            <div *ngIf="filtered.length === 0" class="empty">
+                No products match your filters.
+            </div>
+        </main>
+    </div>
+</div>

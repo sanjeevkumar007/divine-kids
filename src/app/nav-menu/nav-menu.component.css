@@ -1,0 +1,208 @@
+/* Main menu bar */
+.main-menu {
+    background: #2283d2;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Top-level menu */
+.menu-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-height: 54px;
+    border-right: 1px solid #e9ebed;
+}
+
+.menu-list li {
+    flex: 1 1 0;
+    border-right: 1px solid #e9ebed;
+}
+
+.menu-list li:last-child {
+    border-right: none;
+}
+
+.menu-list a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem;
+    text-decoration: none;
+    padding: 10px 0;
+    height: 54px;
+    transition: background 0.2s, color 0.2s;
+    letter-spacing: 0.02em;
+    border-radius: 0;
+    gap: 6px;
+}
+
+.menu-list a:hover {
+    background: #152640;
+    color: #fff;
+    text-decoration: none;
+}
+
+.menu-list .bi-caret-down-fill {
+    font-size: 1em;
+    color: #e4e7eb;
+    margin-left: 4px;
+    margin-top: 1px;
+}
+
+/* Dropdown basics */
+.menu-item {
+    position: relative;
+}
+
+/* Hide all dropdowns by default */
+.menu-item .dropdown {
+    min-width: 260px;
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background: #2283d2;
+    min-width: 180px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+    padding: 6px 0;
+    margin: 0;
+    border-radius: 0 0 8px 8px;
+    max-height: 70vh;
+}
+
+/* Show first-level dropdown on hover */
+.menu-item.has-dropdown:hover>.dropdown {
+    display: block;
+}
+
+/* Dropdown items */
+.menu-item .dropdown li {
+    border-bottom: 1px solid #f0f0f0;
+    list-style: none;
+}
+
+.menu-item .dropdown li:last-child {
+    border-bottom: none;
+}
+
+.menu-item .dropdown li a {
+    color: #f4f4f5;
+    padding: 2px 15px;
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    background: transparent;
+}
+
+.menu-item .dropdown li a:hover {
+    background: #152640;
+    color: #d9dbdd;
+}
+
+/* Second-level (right) dropdown for products */
+.dropdown.right-dropdown {
+    display: none;
+    left: 100%;
+    top: 0;
+    margin-left: 2px;
+    border-radius: 0 8px 8px 8px;
+    min-width: 180px;
+    position: absolute;
+    background: #205e29;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    z-index: 200;
+}
+
+/* Show right-dropdown when hovering over its parent category */
+.menu-item.has-dropdown:hover>.dropdown>.menu-item.has-dropdown:hover>.dropdown.right-dropdown {
+    display: block;
+}
+
+/* Ensure nested dropdown anchors don't inherit the top-level flex/height */
+.menu-item .dropdown a {
+    display: block;
+    /* overrides display:flex */
+    height: auto;
+    /* overrides height:54px */
+    padding: 10px 16px;
+    /* readable padding */
+    color: #d9dbdd;
+    text-decoration: none;
+}
+
+.menu-item .dropdown a:hover {
+    background: #205e29;
+    color: #d9dbdd;
+}
+
+/* Ensure each category <li> becomes the positioning context */
+.menu-item .dropdown>.menu-item {
+    position: relative;
+}
+
+/* Right submenu (products) opens when hovering the category item */
+.menu-item .dropdown>.menu-item:hover>.dropdown.right-dropdown {
+    display: block;
+}
+
+/* Keep the first-level dropdown logic */
+.menu-item.has-dropdown:hover>.dropdown {
+    display: block;
+}
+
+/* Place products panel to the right of the hovered category */
+.menu-item .dropdown>.menu-item>.dropdown.right-dropdown {
+    position: absolute;
+    top: 0 !important;
+    left: calc(100% - 1px) !important;
+    /* butt up against parent */
+    display: none;
+    z-index: 1000;
+    /* over everything */
+    min-width: 220px;
+    /* wider so it’s obvious to the right */
+}
+
+/* Top-level link: keep icon pinned to the right inside the tab */
+.menu-list a {
+    position: relative;
+    /* enable absolute children */
+    padding-right: 28px;
+    /* space for caret */
+}
+
+.menu-list a .caret-down {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    /* override previous margins */
+}
+
+/* Category rows in dropdown: caret on the far right */
+.menu-item .dropdown li a {
+    position: relative;
+    padding-right: 28px;
+    /* space for right caret */
+}
+
+.menu-item .dropdown li a .caret-right {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}

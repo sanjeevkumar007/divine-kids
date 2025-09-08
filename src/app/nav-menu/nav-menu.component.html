@@ -1,0 +1,29 @@
+<nav class="main-menu">
+    <ul class="menu-list">
+        <li *ngFor="let link of navLinks" class="menu-item" [class.has-dropdown]="(link.children?.length || 0) > 0">
+            <a [href]="link.url || '#'">
+                {{ link.label }}
+                <span *ngIf="(link.children?.length || 0) > 0" class="bi bi-caret-down-fill caret caret-down"></span>
+            </a>
+
+            <!-- 1st level dropdown: categories -->
+            <ul *ngIf="(link.children?.length || 0) > 0" class="dropdown">
+                <li *ngFor="let child of link.children" class="menu-item"
+                    [class.has-dropdown]="(child.products?.length || 0) > 0">
+
+                    <a [href]="child.url || '#'">
+                        <a [routerLink]="['/category',child.id]" routerLinkActive="active">{{ child.label }}</a>
+                        <span *ngIf="(child.products?.length || 0) > 0"
+                            class="bi bi-caret-right-fill caret caret-right"></span>
+                    </a>
+
+                    <ul *ngIf="(child.products?.length || 0) > 0" class="dropdown right-dropdown">
+                        <li *ngFor="let product of child.products">
+                            <a [routerLink]="['/product',product.id]">{{ product.name }}</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>

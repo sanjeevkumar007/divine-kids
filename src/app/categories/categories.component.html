@@ -1,0 +1,79 @@
+<div class="page-wrap">
+    <header class="page-header">
+        <div class="title-group">
+            <h1 class="title">{{ category?.name }}</h1>
+            <div class="breadcrumbs">Home › Shop By Learning Model › Makerspace › Educational Technology</div>
+        </div>
+
+        <div class="toolbar">
+            <label class="control">
+                <span>Sort</span>
+                <select [(ngModel)]="sortBy">
+                    <option value="relevance">Relevance</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                </select>
+            </label>
+
+            <label class="control">
+                <span>Items Per Page</span>
+                <select [(ngModel)]="pageSize">
+                    <option [ngValue]="24">24</option>
+                    <option [ngValue]="48">48</option>
+                    <option [ngValue]="96">96</option>
+                </select>
+            </label>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- Sidebar filters -->
+        <aside class="filters">
+            <div class="filter-card">
+                <div class="filter-title">Categories</div>
+                <div class="parent-link" *ngFor="let cat of categories" [routerLink]="'/category/' + cat.id">
+                    <a>{{ cat.name }}</a>
+                </div>
+            </div>
+
+            <!-- <div class="filter-card">
+                <div class="filter-title">Filters</div>
+                <div class="filter-group">
+                    <div class="group-title">Color</div>
+                    <label *ngFor="let c of allColors" class="check">
+                        <input type="checkbox" [checked]="selectedColors.has(c)" (change)="toggleColor(c)" />
+                        <span>{{ c }}</span>
+                    </label>
+                </div>
+            </div> -->
+        </aside>
+
+        <!-- Grid -->
+        <main class="grid">
+            <div *ngFor="let p of filteredProduct" class="card" (click)="goToProduct(p.id)" role="button" tabindex="0"
+                (keydown.enter)="goToProduct(p.id)">
+                <div class="img-wrap">
+                    <img [src]="img(p)" [alt]="p.name" loading="lazy" />
+                    <div class="badges" *ngIf="p.heightCm"></div>
+                </div>
+
+                <div class="meta">
+                    <h3 class="name">{{ p.name }}</h3>
+                    <div class="rating" *ngIf="p.weightKg">
+                        <span class="stars" [style.--value.%]="(p.weightKg || 0) * 20"></span>
+                        <span class="reviews">({{ p.widthCm || 0 }})</span>
+                    </div>
+                </div>
+
+                <div class="actions" (click)="$event.stopPropagation()">
+                    <button class="btn ghost">Compare</button>
+                    <button class="btn primary">Add to Cart</button>
+                </div>
+            </div>
+
+            <div *ngIf="filteredProduct.length === 0" class="empty">
+                No products match your filters.
+            </div>
+        </main>
+    </div>
+</div>

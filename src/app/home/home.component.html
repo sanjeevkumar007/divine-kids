@@ -1,0 +1,17 @@
+<div class="app-shell" [class.admin]="(isAdmin$ | async)">
+    <ng-container *ngIf="(showChrome$ | async)">
+        <app-header-info></app-header-info>
+        <app-nav-menu></app-nav-menu>
+
+        <ng-container *ngIf="(showMarketing$ | async)">
+            <app-new-info></app-new-info>
+            <app-product-slider></app-product-slider>
+        </ng-container>
+    </ng-container>
+
+    <main class="app-main">
+        <router-outlet></router-outlet>
+    </main>
+
+    <app-footer class="app-footer" *ngIf="(showChrome$ | async)"></app-footer>
+</div>
