@@ -7,10 +7,11 @@ import { HeaderInfoComponent } from '../header-info/header-info.component';
 import { ProductSliderComponent } from '../product-slider/product-slider.component';
 import { NewInfoComponent } from '../new-info/new-info.component';
 import { FooterComponent } from '../footer/footer.component';
+import { AboutMeComponent } from "../about-me/about-me.component";
 
 @Component({
   selector: 'app-home',
-  imports: [RouterOutlet, CommonModule, NavMenuComponent, HeaderInfoComponent, ProductSliderComponent, NewInfoComponent, FooterComponent],
+  imports: [RouterOutlet, CommonModule, NavMenuComponent, HeaderInfoComponent, ProductSliderComponent, NewInfoComponent, FooterComponent, AboutMeComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

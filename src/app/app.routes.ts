@@ -48,6 +48,12 @@ export const routes: Routes = [
         path: 'debug-token',
         loadComponent: () => import('./auth/auth.component').then(m => m.AuthComponent)
     },
+    {path:'about-me',
+        loadComponent: () => import('./about-me/about-me.component').then(m => m.AboutMeComponent)
+        },
+
+   
+
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: '**', redirectTo: 'home' }
 ];
