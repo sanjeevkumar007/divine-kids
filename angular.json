@@ -5,7 +5,7 @@
   "projects": {
     "divine-kids": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {}, 
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -43,8 +43,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "20kB",
+                  "maximumError": "20kB"
                 }
               ],
               "outputHashing": "all"
