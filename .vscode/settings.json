@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/44cdcdff-2849-4f1e-a74a-1eaa862afba0/resourceGroups/shamafoundation-rg/providers/Microsoft.Web/sites/divinekids",
+    "appService.deploySubpath": "dist\\divine-kids\\browser"
+}
