@@ -33,7 +33,7 @@ export class AboutMeComponent {
       download: 'assets/pdfs/OARArticle.pdf'
     },
     {
-      title: 'Feeding Reflexes',
+      title: 'Feeding Reflexe',
       subtitle: 'Rooting, sucking & regulation',
       file: 'feeding-reflexes.pdf',
       download: 'assets/pdfs/feeding-reflexes.pdf'
@@ -87,3 +87,4 @@ export class AboutMeComponent {
     }
   }
 }
+
