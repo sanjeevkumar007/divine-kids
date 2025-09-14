@@ -54,9 +54,8 @@
     <!-- Card 1 -->
     <article class="highlight-card">
       <figure class="highlight-media">
-        <img
-          src="https://img1.wsimg.com/isteam/ip/2f205497-abeb-4f1f-b836-d971d7cef5ac/Untitled%20design(1).png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25/rs=w:365,h:365,cg:true"
-          alt="Therapy room showing colorful equipment">
+        <img src="https://img1.wsimg.com/isteam/ip/2f205497-abeb-4f1f-b836-d971d7cef5ac/Untitled%20design(1).png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25/rs=w:365,h:365,cg:true"
+             alt="Therapy room showing colorful equipment">
       </figure>
       <h2 class="highlight-title">Our Services</h2>
       <ul class="highlight-list">
@@ -76,9 +75,8 @@
     <!-- Card 2 -->
     <article class="highlight-card">
       <figure class="highlight-media">
-        <img
-          src="https://img1.wsimg.com/isteam/ip/2f205497-abeb-4f1f-b836-d971d7cef5ac/1708963653722(1).jpg/:/cr=t:0%25,l:12.6%25,w:74.8%25,h:99.99%25/rs=w:730,h:730,cg:true,m"
-          alt="Child-friendly therapy space with table and chairs">
+        <img src="https://img1.wsimg.com/isteam/ip/2f205497-abeb-4f1f-b836-d971d7cef5ac/1708963653722(1).jpg/:/cr=t:0%25,l:12.6%25,w:74.8%25,h:99.99%25/rs=w:730,h:730,cg:true,m"
+             alt="Child-friendly therapy space with table and chairs">
       </figure>
       <h2 class="highlight-title">Conditions</h2>
       <ul class="highlight-list">
@@ -92,9 +90,8 @@
     <!-- Card 3 -->
     <article class="highlight-card">
       <figure class="highlight-media">
-        <img
-          src="https://img1.wsimg.com/isteam/ip/2f205497-abeb-4f1f-b836-d971d7cef5ac/Formal%20Photo%20Yoosuf%20(2)(1).jpg/:/cr=t:15.02%25,l:0%25,w:100%25,h:69.96%25/rs=w:365,h:365,cg:true"
-          alt="Professional portrait">
+        <img src="https://img1.wsimg.com/isteam/ip/2f205497-abeb-4f1f-b836-d971d7cef5ac/Formal%20Photo%20Yoosuf%20(2)(1).jpg/:/cr=t:15.02%25,l:0%25,w:100%25,h:69.96%25/rs=w:365,h:365,cg:true"
+             alt="Professional portrait">
       </figure>
       <h2 class="highlight-title">Professional Details</h2>
       <ul class="highlight-list profile">
@@ -113,10 +110,15 @@
   </div>
 </section>
 
-<div>Banner</div>
+
 
 <!-- MEDIA + PDF SECTION (replaces old separate video divs and pdf-section) -->
 <section class="media-section">
+  <div class="banner-container">
+    <img class="banner-image" src="assets/images/a34d3ccc-f602-4bb6-9113-e47dd277c33e.webp" alt="Banner Image">
+    <div class="banner-text">Welcome to CoolZone</div>
+  </div>
+
   <h2 class="section-title media-main-title">Featured Videos</h2>
 
   <div class="media-grid">
@@ -124,7 +126,7 @@
     <article class="media-card">
       <div class="media-frame ratio-16x9">
         <iframe src="https://youtube.com/embed/snEtRqftevQ?rel=0&showinfo=0&autoplay=0&loop=0&controls=1"
-          title="NDT & Sensory Integration" allowfullscreen loading="lazy"></iframe>
+                title="NDT & Sensory Integration" allowfullscreen loading="lazy"></iframe>
       </div>
       <h3 class="media-heading">NDT & Sensory Integration</h3>
       <p class="media-desc">How combined approaches enhance developmental outcomes.</p>
@@ -134,7 +136,7 @@
     <article class="media-card accent">
       <div class="media-frame ratio-16x9">
         <iframe src="https://youtube.com/embed/O1MXaNMYxT8?rel=0&showinfo=0&autoplay=0&loop=0&controls=1"
-          title="First 1000 Days" allowfullscreen loading="lazy"></iframe>
+                title="First 1000 Days" allowfullscreen loading="lazy"></iframe>
       </div>
       <h3 class="media-heading">First 1000 Days</h3>
       <p class="media-desc">Foundation concepts shaping long‑term growth and resilience.</p>
@@ -144,7 +146,7 @@
     <article class="media-card">
       <div class="media-frame ratio-16x9">
         <iframe src="https://youtube.com/embed/O1MXaNMYxT8?rel=0&showinfo=0&autoplay=0&loop=0&controls=1"
-          title="Movement & Regulation" allowfullscreen loading="lazy"></iframe>
+                title="Movement & Regulation" allowfullscreen loading="lazy"></iframe>
       </div>
       <h3 class="media-heading">Movement & Regulation</h3>
       <p class="media-desc">Understanding why increased movement can be a regulatory need.</p>
@@ -175,8 +177,14 @@
   <div>
     <div class="highlight-title" style="color:white;">Share</div>
   </div>
-  <div class="hero-logo-box"><img class="hero-logo-img"
-      src="https://www.apollohospitals.com/sites/default/files/2025-02/shutterstock_2025907793-scaled.jpg" /></div>
+  <div class="banner-container">
+    <img class="banner-image" src="https://www.apollohospitals.com/sites/default/files/2025-02/shutterstock_2025907793-scaled.jpg" alt="Banner Image" />
+    <div class="banner-text">Rooting Reflex In Newborn Babies and Their Uses</div>
+  </div>
+  <!--<div class="hero-logo-box">
+    <img class="hero-logo-img"
+         src="https://www.apollohospitals.com/sites/default/files/2025-02/shutterstock_2025907793-scaled.jpg" />
+  </div>-->
   <hr style="color:snow;" />
   <section class="info-share" id="info-share">
     <!-- Side / Top Navigation -->
@@ -367,7 +375,7 @@
         <ol>
           <li *ngFor="let item of readingItems; let i = index">
             <button type="button" class="reading-chip" [class.active]="i === currentReadingIndex" (click)="goTo(i)"
-              [attr.aria-current]="i === currentReadingIndex ? 'true' : null">
+                    [attr.aria-current]="i === currentReadingIndex ? 'true' : null">
               <span class="chip-index">{{ i+1 }}</span>
               <span class="chip-text">{{ item.title }}</span>
             </button>
@@ -391,7 +399,8 @@
             <iframe [src]="currentReading.src" title="{{ currentReading.title }}" loading="lazy">
             </iframe>
             <div class="pdf-fallback">
-              <p>Your browser cannot display PDFs. <a [href]="currentReading.download" download>Download instead.</a>
+              <p>
+                Your browser cannot display PDFs. <a [href]="currentReading.download" download>Download instead.</a>
               </p>
             </div>
           </div>
@@ -400,13 +409,13 @@
         <!-- Navigation Controls -->
         <footer class="reading-nav">
           <button type="button" class="nav-btn prev" (click)="prevReading()" [disabled]="currentReadingIndex === 0"
-            aria-label="Previous reading">
+                  aria-label="Previous reading">
             <span class="bi bi-arrow-left" aria-hidden="true"></span>
             <span class="nav-lbl">{{ prevReadingTitle || 'Start' }}</span>
           </button>
 
           <button type="button" class="nav-btn next" (click)="nextReading()"
-            [disabled]="currentReadingIndex === readingItems.length - 1" aria-label="Next reading">
+                  [disabled]="currentReadingIndex === readingItems.length - 1" aria-label="Next reading">
             <span class="nav-lbl">{{ nextReadingTitle || 'End' }}</span>
             <span class="bi bi-arrow-right" aria-hidden="true"></span>
           </button>
