@@ -40,3 +40,19 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+.vs/divine-kids/CopilotIndices/17.14.1147.5054/CodeChunks.db
+.vs/divine-kids/CopilotIndices/17.14.1147.5054/CodeChunks.db-shm
+.vs/divine-kids/CopilotIndices/17.14.1147.5054/CodeChunks.db-wal
+.vs/divine-kids/CopilotIndices/17.14.1147.5054/SemanticSymbols.db
+.vs/divine-kids/CopilotIndices/17.14.1147.5054/SemanticSymbols.db-shm
+.vs/divine-kids/CopilotIndices/17.14.1147.5054/SemanticSymbols.db-wal
+.vs/divine-kids/FileContentIndex/38cab1c6-f824-4f45-839d-6d389b427975.vsidx
+.vs/divine-kids/FileContentIndex/70a90cba-0929-4486-b03d-10a0af911bb9.vsidx
+.vs/divine-kids/FileContentIndex/917efad2-610e-49cc-aa5b-1a87adf3779d.vsidx
+.vs/divine-kids/FileContentIndex/839338ca-3d12-44ad-a660-2bac42fd48e0.vsidx
+.vs/divine-kids/FileContentIndex/b05916a0-2e36-48c1-8d88-d7616d4bcc75.vsidx
+.vs/divine-kids/FileContentIndex/71245492-7ad1-454a-90aa-023681d7b52b.vsidx
+.vs/slnx.sqlite
+"*.vsidx" 
+".vs/**/*.vsidx" 
+-e ".vscode/\n.vs/\n*.user\n*.suo\n*.userosscache\n*.sln.docstates" 
