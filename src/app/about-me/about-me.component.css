@@ -338,7 +338,7 @@
 
 .highlight-section {
   padding: clamp(3.5rem, 6vw, 6rem) clamp(1rem, 4vw, 3rem) 4rem;
-   /* background: linear-gradient(135deg, #e9eaeb 0%, #19c761 42%, #0fda96 160%); */
+  /* background: linear-gradient(135deg, #e9eaeb 0%, #19c761 42%, #0fda96 160%); */
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -527,11 +527,11 @@
     padding-left: 1.35rem;
   }
 
-  .highlight-list li a {
-    color:white;
-    text-decoration: none;
-    font-weight: bold;
-  }
+    .highlight-list li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
 
     .highlight-list li::before {
       content: "";
@@ -611,7 +611,7 @@
   --media-accent: var(--hf-accent, #0f60da);
   --media-bg: radial-gradient(circle at 65% 35%, #ffffff 0%, #f4f7fb 70%);
   padding: clamp(3.5rem, 6vw, 5.5rem) clamp(1rem, 3.5vw, 3rem) clamp(4rem, 6vw, 6rem);
-   /* background: linear-gradient(135deg, #e9eaeb 0%, #19c761 42%, #0fda96 160%); */
+  /* background: linear-gradient(135deg, #e9eaeb 0%, #19c761 42%, #0fda96 160%); */
   /* position: relative; */
   /* overflow: hidden; */
   /* isolation: isolate; */
@@ -918,9 +918,7 @@
 .intro-hero {
   position: relative;
   padding: clamp(2.8rem, 5vw, 4.2rem) clamp(1.2rem, 4vw, 3.2rem) clamp(3.5rem, 6vw, 5rem);
-  background: linear-gradient(
-63deg, #e9eaeb 0%, #2283d2 42%, #0fda96 160%);
-  color: #fff;
+  background: linear-gradient(135deg, #2283d2, #0f60da 45%, #0f60da 160%);
   overflow: hidden;
   border-radius: 0 0 0px 0px;
   box-shadow: 0 14px 40px -12px rgba(0, 0, 0, 0.55);
@@ -1046,13 +1044,12 @@
   position: relative;
   display: flex;
   justify-content: center;
-  
 }
 
 .hero-logo-ring {
   position: relative;
-  width: 500px;         /* wider */
-  height: 220px;        /* shorter */
+  width: 500px; /* wider */
+  height: 220px; /* shorter */
   border-radius: 50% / 50%; /* perfect ellipse */
   background: conic-gradient(from 200deg, #0f60da, #54a4ff, #0f60da);
   padding: 6px;
@@ -1252,7 +1249,7 @@
 /* Optional dark-mode alignment (already dark; minor tune) */
 @media (prefers-color-scheme: dark) {
   .intro-hero {
-    background: linear-gradient(135deg, #05070b, #0b141d 45%, #0f60da 160%);
+    background: linear-gradient( 316deg, #2283d2, #4b86c1 45%, #0f60da 160%);
   }
 }
 
@@ -1670,9 +1667,7 @@
 .readings-shell {
   --r-accent: #0f60da;
   --r-accent-alt: #55a7ff;
-  --r-bg: 
-
-linear-gradient(135deg, #0d6efd 0%, #1f8dc3 55%, #167ac6 160%);
+  --r-bg: linear-gradient(135deg, #0d6efd 0%, #1f8dc3 55%, #167ac6 160%);
   --r-glass: rgba(255, 255, 255, 0.08);
   --r-border: rgba(255, 255, 255, 0.18);
   --r-radius: 30px;
