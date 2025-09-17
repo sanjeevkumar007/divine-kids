@@ -338,7 +338,7 @@
 
 .highlight-section {
   padding: clamp(3.5rem, 6vw, 6rem) clamp(1rem, 4vw, 3rem) 4rem;
-   background: linear-gradient(135deg, #e9eaeb 0%, #19c761 42%, #0fda96 160%);
+   /* background: linear-gradient(135deg, #e9eaeb 0%, #19c761 42%, #0fda96 160%); */
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -516,7 +516,7 @@
   font-family: cursive;
   font-size: 13px;
   line-height: 1.42rem;
-  color: #041412;
+  color: #ffff;
   display: flex;
   flex-direction: column;
   gap: .55rem;
@@ -525,6 +525,12 @@
   .highlight-list li {
     position: relative;
     padding-left: 1.35rem;
+  }
+
+  .highlight-list li a {
+    color:white;
+    text-decoration: none;
+    font-weight: bold;
   }
 
     .highlight-list li::before {
@@ -605,10 +611,10 @@
   --media-accent: var(--hf-accent, #0f60da);
   --media-bg: radial-gradient(circle at 65% 35%, #ffffff 0%, #f4f7fb 70%);
   padding: clamp(3.5rem, 6vw, 5.5rem) clamp(1rem, 3.5vw, 3rem) clamp(4rem, 6vw, 6rem);
-   background: linear-gradient(135deg, #e9eaeb 0%, #19c761 42%, #0fda96 160%);
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
+   /* background: linear-gradient(135deg, #e9eaeb 0%, #19c761 42%, #0fda96 160%); */
+  /* position: relative; */
+  /* overflow: hidden; */
+  /* isolation: isolate; */
   /*  margin-top: 2rem;*/
 }
 
@@ -912,7 +918,8 @@
 .intro-hero {
   position: relative;
   padding: clamp(2.8rem, 5vw, 4.2rem) clamp(1.2rem, 4vw, 3.2rem) clamp(3.5rem, 6vw, 5rem);
-  background: linear-gradient(135deg, #e9eaeb 0%, #19c761 42%, #0fda96 160%);
+  background: linear-gradient(
+63deg, #e9eaeb 0%, #2283d2 42%, #0fda96 160%);
   color: #fff;
   overflow: hidden;
   border-radius: 0 0 0px 0px;
@@ -1039,13 +1046,14 @@
   position: relative;
   display: flex;
   justify-content: center;
+  
 }
 
 .hero-logo-ring {
   position: relative;
-  width: clamp(240px, 32vw, 400px);
-  aspect-ratio: 1;
-  border-radius: 50%;
+  width: 500px;         /* wider */
+  height: 220px;        /* shorter */
+  border-radius: 50% / 50%; /* perfect ellipse */
   background: conic-gradient(from 200deg, #0f60da, #54a4ff, #0f60da);
   padding: 6px;
   display: grid;
@@ -1080,11 +1088,12 @@
 .hero-logo-img {
   position: relative;
   z-index: 2;
-  width: 72%;
-  height: 72%;
+  width: 62%;
+  height: 62%;
   object-fit: contain;
   filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.35));
   animation: logoFloat 6s ease-in-out infinite;
+  border: solid rgb(216, 213, 213) 1px;
 }
 
 @keyframes logoFloat {
@@ -1269,7 +1278,7 @@
 .info-share {
   --info-accent: #0fda53;
   --info-accent-alt: #53a4ff;
-  --info-bg: linear-gradient(135deg, #075a31 0%, #075a31 55%, #5be08e 160%);
+  --info-bg: linear-gradient(135deg, #0d6efd 0%, #1f8dc3 55%, #167ac6 160%);
   --info-glass: rgba(255, 255, 255, 0.07);
   --info-border: rgba(255, 255, 255, 0.14);
   --info-radius: 26px;
@@ -1337,7 +1346,7 @@
   font-weight: 700;
   letter-spacing: 1.6px;
   text-transform: uppercase;
-  color: #fff;
+  color: #ffff;
   background: linear-gradient(90deg, var(--info-accent), var(--info-accent-alt));
   -webkit-background-clip: text;
   color: transparent;
@@ -1661,7 +1670,9 @@
 .readings-shell {
   --r-accent: #0f60da;
   --r-accent-alt: #55a7ff;
-  --r-bg: linear-gradient(135deg, #075a31 0%, #075a31 55%, #5be08e 160%);
+  --r-bg: 
+
+linear-gradient(135deg, #0d6efd 0%, #1f8dc3 55%, #167ac6 160%);
   --r-glass: rgba(255, 255, 255, 0.08);
   --r-border: rgba(255, 255, 255, 0.18);
   --r-radius: 30px;
