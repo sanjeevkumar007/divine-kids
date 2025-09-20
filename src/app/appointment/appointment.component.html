@@ -225,8 +225,8 @@
       </div>
 
       <div class="form-actions">
-        <button type="reset" class="btn ghost" [disabled]="submitting">Reset</button>
-        <button type="submit" class="btn primary" >
+        <button type="reset" class="btn btn-warning" [disabled]="submitting">Reset</button>
+        <button type="submit" class="btn btn-dark" >
           <!--<button type="submit" class="btn primary" [disabled]="submitting || apptForm.invalid">-->
             <span *ngIf="!submitting">Submit Request ▸</span>
             <span *ngIf="submitting">Submitting…</span>
