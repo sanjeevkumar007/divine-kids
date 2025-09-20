@@ -26,9 +26,9 @@
               </div>
         <figcaption class="visually-hidden">Shama Foundation Logo</figcaption>
       </figure> -->
-      <figure class="hero-logo-box">
+      <figure class="hero-logo-box ">
 
-        <img src="../../assets/images/logo2.png" alt="Shama Foundation Logo" class="hero-logo-img">
+        <img src="../../assets/images/Shama Foundation-Orignal-Logo.png" alt="Shama Foundation Logo" class="hero-logo-img">
       </figure>
 
       <!-- Content -->
@@ -448,126 +448,4 @@
   </section>
 </section>
 
-<!-- ================= APPOINTMENTS (Doctor Booking) ================= -->
-<section class="appointments-section" id="appointments">
-  <header class="appointments-head">
-    <h2 class="appointments-title">
-      <span class="appointments-accent-icon" aria-hidden="true">🩺</span>
-      Book an Appointment
-    </h2>
-    <p class="appointments-sub">
-      Schedule a consultation with our specialists. Provide a few details and we will confirm shortly.
-    </p>
-  </header>
-
-  <div class="appointments-layout">
-    <!-- Doctor Selector -->
-    <aside class="doctor-panel" aria-label="Available doctors">
-      <h3 class="doctor-panel__title">Select Doctor</h3>
-      <ul class="doctor-list">
-        <li>
-          <button type="button" class="doctor-card active" aria-pressed="true">
-            <figure class="doctor-card__media">
-              <img src="../../assets/images/logo2.png" alt="Dr. Mohd Yoosuf">
-            </figure>
-            <div class="doctor-card__body">
-              <h4 class="doctor-card__name">Dr. Mohd Yoosuf</h4>
-              <p class="doctor-card__spec">Pediatric Neuro Rehab</p>
-              <p class="doctor-card__meta">Exp: 25+ yrs</p>
-            </div>
-            <span class="doctor-card__check" aria-hidden="true">✓</span>
-          </button>
-        </li>
-        <li>
-          <button type="button" class="doctor-card">
-            <figure class="doctor-card__media">
-              <img src="../../assets/images/logo2.png" alt="Dr. Mohd Yoosuf">
-            </figure>
-            <div class="doctor-card__body">
-              <h4 class="doctor-card__name">Dr. Shraddha</h4>
-              <p class="doctor-card__spec">Developmental Therapy</p>
-              <p class="doctor-card__meta">Exp: 12 yrs</p>
-            </div>
-            <span class="doctor-card__check" aria-hidden="true">✓</span>
-          </button>
-        </li>
-      </ul>
-      <p class="doctor-hint">Tap to choose a doctor</p>
-    </aside>
-
-    <!-- Appointment Form -->
-    <form class="appointment-form" novalidate aria-labelledby="appointmentsFormTitle">
-      <h3 id="appointmentsFormTitle" class="form-title">Appointment Details</h3>
-      <div class="form-grid">
-        <div class="form-field">
-          <label for="parentName">Parent / Guardian Name</label>
-          <input id="parentName" name="parentName" type="text" placeholder="e.g. Sarah Khan" required>
-        </div>
-        <div class="form-field">
-          <label for="childName">Child Name</label>
-          <input id="childName" name="childName" type="text" placeholder="Child full name" required>
-        </div>
-        <div class="form-field">
-          <label for="childAge">Child Age (months / years)</label>
-          <input id="childAge" name="childAge" type="text" placeholder="e.g. 30 months" required>
-        </div>
-        <div class="form-field">
-          <label for="condition">Primary Concern</label>
-          <select id="condition" name="condition" required>
-            <option value="" disabled selected>Select...</option>
-            <option>High Risk Infant Follow‑up</option>
-            <option>Autism / ASD Screening</option>
-            <option>Speech / Communication Delay</option>
-            <option>Sensory Processing Issue</option>
-            <option>Motor / Developmental Delay</option>
-            <option>Feeding / Oral Issues</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label for="preferredDate">Preferred Date</label>
-          <input id="preferredDate" name="preferredDate" type="date" required>
-        </div>
-        <div class="form-field">
-          <label for="preferredTime">Preferred Time</label>
-          <input id="preferredTime" name="preferredTime" type="time" required>
-        </div>
-        <div class="form-field">
-          <label for="mode">Session Mode</label>
-          <select id="mode" name="mode" required style="color:black;">
-            <option value="" disabled selected>Select...</option>
-            <option>In‑Clinic</option>
-            <option>Virtual (Video)</option>
-            <option>Home Visit (If Eligible)</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label for="contactEmail">Email</label>
-          <input id="contactEmail" name="contactEmail" type="email" placeholder="you@example.com" required>
-        </div>
-        <div class="form-field">
-          <label for="contactPhone">Phone</label>
-          <input id="contactPhone" name="contactPhone" type="tel" placeholder="+91 99999 00000" required>
-        </div>
-        <div class="form-field span-2">
-          <label for="notes">Additional Notes</label>
-          <textarea id="notes" name="notes" rows="4" placeholder="Describe concerns, goals, previous assessments..."></textarea>
-        </div>
-        <div class="form-field span-2 attach-field">
-          <label for="reports">Upload Reports (optional)</label>
-          <input id="reports" name="reports" type="file" accept=".pdf,.jpg,.png">
-          <small>Max 5MB. PDF / JPG / PNG.</small>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button type="reset" class="btn ghost">Reset</button>
-        <button type="submit" class="btn nav-btn">Submit Request ▸</button>
-      </div>
-
-      <p class="privacy-note">
-        By submitting you consent to secure processing of provided health information for scheduling purposes only.
-      </p>
-    </form>
-  </div>
-</section>
-
+<app-appointment></app-appointment>

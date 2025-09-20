@@ -1,6 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
+import { AppointmentComponent } from '../appointment/appointment.component';
 
 interface ReadingItem {
   title: string;
@@ -13,7 +14,7 @@ interface ReadingItem {
 @Component({
   selector: 'app-about-me',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AppointmentComponent],
   templateUrl: './about-me.component.html',
   styleUrls: ['./about-me.component.css']
 })
@@ -76,6 +77,10 @@ export class AboutMeComponent {
   }
   goTo(i: number): void {
     this.currentReadingIndex = i;
+  }
+
+  submitRequest(): any {
+    const email = 'email';
   }
 
   @HostListener('window:keydown', ['$event'])
