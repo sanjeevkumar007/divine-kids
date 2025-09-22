@@ -1,4 +1,4 @@
 export const environment = {
-    production: true,
-    apiUrl: 'https://divinekidsapi-ghhmd5dyafb5c7h0.centralindia-01.azurewebsites.net/api'
+  production: false,
+  apiUrl: 'https://localhost:7257/api'
 };

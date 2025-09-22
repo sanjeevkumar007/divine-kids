@@ -339,7 +339,7 @@
 .highlight-section {
   padding: clamp(3.5rem, 6vw, 6rem) clamp(1rem, 4vw, 3rem) 4rem;
   /* background: linear-gradient(135deg, #e9eaeb 0%, #19c761 42%, #0fda96 160%); */
-  background: #5ec9af;
+  background: #ffffff;
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -672,7 +672,7 @@
 }
 
   .media-card.accent {
-    background: #5ec9af;
+    background: #5684c9;
     color: #fff;
     border-color: rgba(255, 255, 255, 0.18);
     box-shadow: 0 6px 22px -6px rgba(15, 96, 218, 0.6);
@@ -1041,7 +1041,7 @@
   align-items: center;
   gap: var(--gap);
   margin-top: .2rem;
-  background: #5ec9af;
+  background: white;
 }
 
 .hero-logo-box {
@@ -1122,7 +1122,7 @@
   line-height: 1.25;
   letter-spacing: 1.2px;
   font-weight: 600;
-  color: #f0f6ff;
+  color: black;
   text-shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
   position: relative;
 }
@@ -1288,7 +1288,7 @@
   position: relative;
   margin: clamp(3.5rem, 6vw, 5.5rem) auto 4rem;
   padding: clamp(2.2rem, 4vw, 3.2rem) clamp(1.1rem, 3.5vw, 2.6rem) clamp(3rem, 6vw, 4.2rem);
-  background: #5ec9af;
+  background: #569aff;
   border-radius: 40px;
   color: var(--info-text);
   box-shadow: 0 32px 70px -28px rgba(0, 0, 0, 0.65), 0 6px 24px -8px rgba(0, 0, 0, 0.55);
@@ -1679,7 +1679,7 @@
   margin: clamp(3.8rem, 6vw, 5.5rem) auto;
   padding: clamp(2.2rem, 4vw, 3.2rem);
   border-radius: 44px;
-  background: #5ec9af;
+  background: #569aff;
   color: black;
   box-shadow: 0 30px 70px -28px rgba(0, 0, 0, .65), 0 6px 24px -10px rgba(0, 0, 0, .55);
   position: relative;
