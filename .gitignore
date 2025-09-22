@@ -56,3 +56,9 @@ Thumbs.db
 "*.vsidx" 
 ".vs/**/*.vsidx" 
 -e ".vscode/\n.vs/\n*.user\n*.suo\n*.userosscache\n*.sln.docstates" 
+*.vsidx
+*.db-wal
+*.db
+*.db-shm
+/.vs/Client
+/.vs/slnx.sqlite
