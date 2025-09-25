@@ -2,11 +2,20 @@ import { Component, NgZone, ChangeDetectorRef, OnInit, inject } from '@angular/c
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
+import type {
+  ColDef,
+  GridApi,
+  GridReadyEvent,
+  ICellRendererParams,
+  GetRowIdParams
+} from 'ag-grid-community';
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import { MainCategory } from '../../../models/nav-models/main-category';
 import { MainCategoryService } from '../../../common/services/main-category-service.service';
-import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
+
 ModuleRegistry.registerModules([AllCommunityModule]);
+
+type MainCategoryRow = MainCategory & { __tempId?: number };
 
 @Component({
   standalone: true,
@@ -19,11 +28,19 @@ export class AdminMainCategoriesComponent implements OnInit {
   private mainCategoryService = inject(MainCategoryService);
   constructor(private ngZone: NgZone, private cdr: ChangeDetectorRef) { }
 
-  rowData: MainCategory[] = [];
-  gridApi!: GridApi<MainCategory>;
+  rowData: MainCategoryRow[] = [];
+  gridApi!: GridApi<MainCategoryRow>;
+  private tempIdCounter = -1;
+  saving = false;
 
-  defaultColDef: ColDef<MainCategory> = { resizable: true, sortable: true, filter: true, minWidth: 120 };
-  columnDefs: ColDef<MainCategory>[] = [
+  defaultColDef: ColDef<MainCategoryRow> = {
+    resizable: true,
+    sortable: true,
+    filter: true,
+    minWidth: 120
+  };
+
+  columnDefs: ColDef<MainCategoryRow>[] = [
     { headerName: 'ID', field: 'id', maxWidth: 90, filter: 'agNumberColumnFilter' },
     { headerName: 'Name', field: 'name', minWidth: 160, flex: 1 },
     { headerName: 'Description', field: 'description', minWidth: 200, flex: 1 },
@@ -32,19 +49,46 @@ export class AdminMainCategoriesComponent implements OnInit {
       maxWidth: 200,
       sortable: false,
       filter: false,
-      cellRenderer: (p: ICellRendererParams<MainCategory>) => this.actionsRenderer(p),
+      cellRenderer: (p: ICellRendererParams<MainCategoryRow>) => this.actionsRenderer(p),
     },
   ];
 
+  getRowId = (p: GetRowIdParams<MainCategoryRow>): string => {
+    const d = p.data;
+    if (!d) return '';
+    if (d.id != null && d.id > 0) return String(d.id);
+    if (d.__tempId == null) d.__tempId = this.tempIdCounter--;
+    return 'tmp' + d.__tempId;
+  };
+
   ngOnInit(): void {
-    this.mainCategoryService.getMainCategories().subscribe(data => {
-      this.rowData = data;
-      this.gridApi?.setGridOption('rowData', this.rowData);
-      this.cdr.markForCheck();
+    this.refreshAll();
+  }
+
+  refreshAll(showGridOverlay: boolean = false): void {
+    if (showGridOverlay && this.gridApi) {
+      this.gridApi.showLoadingOverlay();
+    }
+    this.mainCategoryService.getMainCategories().subscribe({
+      next: data => {
+        const cleaned = (data || [])
+          .filter((r): r is MainCategory => !!r)
+          .map(r => (r.id == null || r.id <= 0) ? { ...r, __tempId: this.tempIdCounter-- } : r);
+        this.rowData = cleaned;
+        if (this.gridApi) {
+          this.gridApi.setGridOption('rowData', this.rowData);
+          this.gridApi.hideOverlay();
+        }
+        this.cdr.markForCheck();
+      },
+      error: err => {
+        console.error('[refreshAll] error', err);
+        if (this.gridApi) this.gridApi.hideOverlay();
+      }
     });
   }
 
-  private actionsRenderer = (p: ICellRendererParams<MainCategory>) => {
+  private actionsRenderer = (p: ICellRendererParams<MainCategoryRow>) => {
     const wrap = document.createElement('div');
     wrap.className = 'dk-actions';
 
@@ -54,7 +98,7 @@ export class AdminMainCategoriesComponent implements OnInit {
     edit.textContent = 'Edit';
     edit.addEventListener('click', ev => {
       ev.stopPropagation();
-      this.ngZone.run(() => { this.openEditModal(p.data!); });
+      this.ngZone.run(() => this.openEditModal(p.data!));
     });
 
     const del = document.createElement('button');
@@ -63,28 +107,29 @@ export class AdminMainCategoriesComponent implements OnInit {
     del.textContent = 'Delete';
     del.addEventListener('click', ev => {
       ev.stopPropagation();
-      this.ngZone.run(() => { this.askDelete(p.data!); });
+      this.ngZone.run(() => this.askDelete(p.data!));
     });
 
     wrap.append(edit, del);
     return wrap;
   };
 
-  onGridReady(e: GridReadyEvent<MainCategory>) {
+  onGridReady(e: GridReadyEvent<MainCategoryRow>) {
     this.gridApi = e.api;
     this.gridApi.setGridOption('pagination', true);
     this.gridApi.setGridOption('paginationPageSize', 10);
     setTimeout(() => this.gridApi.sizeColumnsToFit(), 0);
   }
+
   onPageSizeChange(ev: Event) {
     const size = +(ev.target as HTMLSelectElement).value;
     this.gridApi?.setGridOption('paginationPageSize', size);
   }
 
-  // Modal state
+  // Modal / form state
   showFormModal = false;
   isEditForm = false;
-  form: Partial<MainCategory> = {};
+  form: Partial<MainCategoryRow> = {};
   previewUrl: string | null = null;
   selectedFile: File | null = null;
 
@@ -94,16 +139,20 @@ export class AdminMainCategoriesComponent implements OnInit {
     this.resetPreview();
     this.showFormModal = true;
   }
-  openEditModal(row: MainCategory) {
+
+  openEditModal(row: MainCategoryRow) {
     this.isEditForm = true;
     this.form = { ...row };
     this.resetPreview();
     this.showFormModal = true;
   }
+
   closeFormModal() {
     this.showFormModal = false;
     this.resetPreview();
     this.selectedFile = null;
+    this.saving = false;
+    this.cdr.markForCheck();
   }
 
   onFileSelected(e: Event) {
@@ -118,29 +167,43 @@ export class AdminMainCategoriesComponent implements OnInit {
 
   saveMainCategory(ev: Event) {
     ev.preventDefault();
+    if (this.saving) return;
     const name = (this.form.name || '').trim();
     if (!name) return;
+
+    this.saving = true;
+    this.cdr.markForCheck();
+
+    const finalize = () => {
+      this.saving = false;
+      this.cdr.markForCheck();
+    };
 
     const persist = (imageUrl?: string) => {
       if (imageUrl) this.form.imageUrl = imageUrl;
 
-      if (this.isEditForm && this.form.id != null) {
-        const idx = this.rowData.findIndex(r => r.id === this.form.id);
-        if (idx === -1) return;
+      if (this.isEditForm && this.form.id && this.form.id > 0) {
         const payload: MainCategory = {
-          ...this.rowData[idx],
+          id: this.form.id,
           name,
           description: this.form.description || '',
           imageUrl: this.form.imageUrl || '',
-          categories: this.rowData[idx].categories || []
+          categories: []
         };
         this.mainCategoryService.updateMainCategory(payload.id, payload).subscribe({
           next: res => {
-            this.rowData[idx] = res;
-            this.gridApi.setGridOption('rowData', [...this.rowData]);
-            this.closeFormModal();
+            if (!res || res.id == null) {
+              console.warn('[update] invalid response; full refresh');
+            }
+            this.ngZone.run(() => {
+              this.closeFormModal();
+              this.refreshAll(true); // always re-fetch latest
+            });
           },
-          error: err => console.error(err)
+          error: err => {
+            console.error('[updateMainCategory] error', err);
+          },
+          complete: finalize
         });
       } else {
         const payload: MainCategory = {
@@ -152,20 +215,29 @@ export class AdminMainCategoriesComponent implements OnInit {
         };
         this.mainCategoryService.addMainCategory(payload).subscribe({
           next: res => {
-            this.rowData = [res, ...this.rowData];
-            this.gridApi.setGridOption('rowData', this.rowData);
-            this.closeFormModal();
+            if (!res || res.id == null || res.id <= 0) {
+              console.warn('[addMainCategory] invalid response; full refresh');
+            }
+            this.ngZone.run(() => {
+              this.closeFormModal();
+              this.refreshAll(true);
+            });
           },
-          error: err => console.error(err)
+          error: err => {
+            console.error('[addMainCategory] error', err);
+          },
+          complete: finalize
         });
       }
-
     };
 
     if (this.selectedFile) {
       this.mainCategoryService.uploadBlob(this.selectedFile).subscribe({
-        next: r => persist(r.url),
-        error: err => { console.error(err); persist(); }
+        next: r => persist(r?.url),
+        error: err => {
+          console.error('[uploadBlob] error', err);
+          persist();
+        }
       });
     } else {
       persist();
@@ -174,20 +246,26 @@ export class AdminMainCategoriesComponent implements OnInit {
 
   // Delete
   showDeleteModal = false;
-  rowToDelete: MainCategory | null = null;
-  askDelete(row: MainCategory) { this.rowToDelete = row; this.showDeleteModal = true; }
+  rowToDelete: MainCategoryRow | null = null;
+
+  askDelete(row: MainCategoryRow) {
+    this.rowToDelete = row;
+    this.showDeleteModal = true;
+  }
+
   confirmDelete() {
     if (!this.rowToDelete) { this.showDeleteModal = false; return; }
-    const id = this.rowToDelete.id;
-    this.mainCategoryService.deleteMainCategory(id).subscribe({
+    const deleting = this.rowToDelete;
+    this.mainCategoryService.deleteMainCategory(deleting.id).subscribe({
       next: () => {
-        this.rowData = this.rowData.filter(r => r.id !== id);
-        this.gridApi.setGridOption('rowData', this.rowData);
+        // Simpler: full refresh to stay consistent
+        this.refreshAll(true);
       },
-      error: err => console.error(err),
+      error: err => console.error('[deleteMainCategory] error', err),
       complete: () => {
         this.rowToDelete = null;
         this.showDeleteModal = false;
+        this.cdr.markForCheck();
       }
     });
   }

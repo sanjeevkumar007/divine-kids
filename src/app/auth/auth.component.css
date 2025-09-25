@@ -225,4 +225,82 @@ form {
 :host,
 :host ::ng-deep .app-main {
     overflow: visible;
+    /* existing styles above ... */
+
+    /* Positioning to allow overlay */
+    .login-form.with-loader {
+      position: relative;
+    }
+
+    /* Inline button loader */
+    .btn-loader {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 60px;
+      height: 18px;
+    }
+
+    .spinner {
+      --sz: 16px;
+      width: var(--sz);
+      height: var(--sz);
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      animation: spin .75s linear infinite;
+      box-sizing: border-box;
+    }
+
+    .spinner.lg {
+      --sz: 42px;
+      border-width: 4px;
+      border-color: rgba(255,255,255,.28);
+      border-top-color: #ffffff;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Optional whole-form blocker */
+    .form-blocker {
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(4px) saturate(140%);
+      -webkit-backdrop-filter: blur(4px) saturate(140%);
+      background: linear-gradient(135deg, rgba(255,255,255,.35), rgba(255,255,255,.15));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: inherit;
+      z-index: 10;
+      animation: fadeIn .25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .overlay-spinner {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      color: #0c4063;
+      font-size: .75rem;
+      letter-spacing: 1.2px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* Adjust disabled state when loading */
+    .btn.primary[disabled] {
+      opacity: .8;
+      cursor: not-allowed;
+      filter: saturate(.7);
+    }
+
+    /* Keep previous CSS below unchanged */
 }

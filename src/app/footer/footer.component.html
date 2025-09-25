@@ -1,3 +1,47 @@
-<div class="footer">
-  <p>Copyright © 2025 Divine Kids  - All Rights Reserved.</p>
-</div>
+<footer class="site-footer">
+  <div class="footer-bg-accent"></div>
+
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="brand-mark" aria-hidden="true">
+        <span class="brand-initial">DK</span>
+      </div>
+      <p class="brand-desc">
+        {{ description }}
+      </p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <h3 class="footer-heading">Explore</h3>
+      <ul>
+        <li><a routerLink="/about">About Us</a></li>
+        <li><a routerLink="/appointment">Appointments</a></li>
+        <li><a routerLink="/media">Media</a></li>
+        <li><a routerLink="/downloads">Downloads</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer-newsletter">
+      <h3 class="footer-heading">Stay Updated</h3>
+      <form (ngSubmit)="subscribe()" class="subscribe-form" novalidate>
+        <label class="visually-hidden" for="footer-email">Email address</label>
+        <input id="footer-email"
+               type="email"
+               name="email"
+               [(ngModel)]="email"
+               required
+               placeholder="Email address" />
+        <button type="submit">Subscribe</button>
+      </form>
+      <div class="social-row">
+        <a href="#" aria-label="Facebook" class="social-icon si-fb">f</a>
+        <a href="#" aria-label="YouTube" class="social-icon si-yt">▶</a>
+        <a href="#" aria-label="Instagram" class="social-icon si-ig">◎</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-base">
+    <p>Copyright © {{ currentYear }} Divine Kids - All Rights Reserved.</p>
+  </div>
+</footer>

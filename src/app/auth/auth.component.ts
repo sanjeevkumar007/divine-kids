@@ -20,15 +20,15 @@ export class AuthComponent {
   private router = inject(Router);
   mode: 'login' | 'register' = 'login';
 
-  currentUser = signal<User | null>(null)
-
+  currentUser = signal<User | null>(null);
   registerData: Register | null = null;
-
 
   loginForm!: FormGroup;
   registerForm!: FormGroup;
 
-  private submitting = false;
+  // made public for template binding
+  submitting = false;
+  // If later you want separate flags, add: loginSubmitting = false; registerSubmitting = false;
 
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -55,47 +55,61 @@ export class AuthComponent {
 
   submitLogin() {
     if (this.submitting) return;
+
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
     this.submitting = true;
 
-    if (this.loginForm.invalid) return;
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
         console.log('[AuthComponent] login success token:', this.authService.token);
+        this.submitting = false; // in case navigation is delayed
         this.router.navigate(['/admin/main-categories']);
       },
-      error: e => console.error('[AuthComponent] login error', e)
+      error: e => {
+        console.error('[AuthComponent] login error', e);
+        this.submitting = false;
+      }
     });
   }
 
   submitRegister() {
     if (this.submitting) return;
-    this.submitting = true;
 
-    if (this.registerForm.invalid) return;
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      return;
+    }
+
     if (this.registerForm.value.password !== this.registerForm.value.confirm) {
       this.registerForm.get('confirm')?.setErrors({ mismatch: true });
       return;
     }
 
-    if (this.registerForm) {
-      this.registerData = {
-        phoneNumber: this.registerForm.value.phoneNumber,
-        confirm: this.registerForm.value.confirm,
-        name: this.registerForm.value.name,
-        email: this.registerForm.value.email,
-        password: this.registerForm.value.password
-      };
-    }
+    this.submitting = true;
 
-    if (!this.registerData) {
-      this.submitting = false;
-      return;
-    }
+    this.registerData = {
+      phoneNumber: this.registerForm.value.phoneNumber,
+      confirm: this.registerForm.value.confirm,
+      name: this.registerForm.value.name,
+      email: this.registerForm.value.email,
+      password: this.registerForm.value.password
+    };
+
     this.authService.register(this.registerData).subscribe({
-      next: () => { console.log('ok'); this.submitting = false; },
-      error: e => { console.error(e); this.submitting = false; }
+      next: () => {
+        console.log('[AuthComponent] register ok');
+        this.submitting = false;
+        this.switch('login');
+        this.loginForm.patchValue({ email: this.registerData?.email });
+      },
+      error: e => {
+        console.error('[AuthComponent] register error', e);
+        this.submitting = false;
+      }
     });
-
-    console.log('register', this.registerForm.value);
   }
 }
