@@ -22,7 +22,10 @@ export class ProductSliderComponent implements OnInit {
     });
   }
 
-  img(p: Product) { return p.imageUrl || this.placeholder; }
+  img(p: Product) { 
+    console.log("Image URL:", p.imageUrl);
+    return p.imageUrl || this.placeholder;
+   }
 
   currentIndex = 0;
 

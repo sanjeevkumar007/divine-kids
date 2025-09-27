@@ -78,9 +78,10 @@ export class ProductService {
     return this.http.post<{ fileName: string; url: string }>(`${this.apiBaseUrl}/Blob/UploadImage`, fd);
   }
 
-  toAbsolute(imageUrl: string): any {
+   toAbsolute(imageUrl: string): any {
     if (!imageUrl) return undefined;
-    if (/^(https?:)?\/\//i.test(imageUrl)) return imageUrl;
+    // treat fully-qualified URLs and safe schemes (http(s), //, data:, blob:) as absolute
+    if (/^(blob:|data:|https?:\/\/|\/\/)/i.test(imageUrl)) return imageUrl;
     if (imageUrl.startsWith('/')) return this.apiRoot + imageUrl;
     return `${this.apiRoot}/${imageUrl}`;
   }

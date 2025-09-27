@@ -1,17 +1,14 @@
 <div class="slider-container">
     <button class="slider-btn" (click)="prev()" [disabled]="currentIndex === 0">&#8592;</button>
 
-    <div class="slider-products">
-        <a class="product-card" *ngFor="let product of products | slice: currentIndex : currentIndex + 3"
-            [routerLink]="['/product', product.id]" [attr.aria-label]="product.name">
-            <div class="img-wrap">
-                <img [src]="img(product)" [alt]="product.name" loading="lazy">
-            </div>
-            <h5 class="name">{{ product.name }}</h5>
-            <p class="price">{{ product.price }}</p>
-            <span class="view">View Details →</span>
-        </a>
-    </div>
-
+<div class="slider-products">
+<div class="product-card" *ngFor="let product of products | slice: currentIndex : currentIndex + 3">
+  <div class="img-wrap">
+    <img [src]="product.imageUrl" [alt]="product.name" loading="lazy">
+    <div class="overlay" [routerLink]="['/product', product.id]"></div>
+  </div>
+  <h4 class="name">{{ product.name }}</h4>
+</div>
+</div>
     <button class="slider-btn" (click)="next()" [disabled]="currentIndex >= products.length - 3">&#8594;</button>
 </div>

@@ -71,3 +71,12 @@
     color: #0f5625;
     font-weight: 600;
 }
+
+.img-wrap {
+  position: relative;
+}
+.overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  cursor: pointer;
+}

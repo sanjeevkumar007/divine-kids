@@ -22,6 +22,9 @@ export class AdminProductsComponent implements OnInit {
   private productService = inject(ProductService)
   private categoryService = inject(CategoryService)
 
+  // preserve original server image when editing so we don't save blob: URLs
+  originalImageUrl: string | null = null;
+
   selectedFile: File | null = null;
   mainCategoryService: any;
 
@@ -110,7 +113,9 @@ export class AdminProductsComponent implements OnInit {
 
   openEditModal(row: Product) {
     this.isEditForm = true;
-    this.form = { ...row };
+    // keep server URL separately so we can fall back when user didn't upload a new file
+    this.originalImageUrl = row.imageUrl ?? null;
+    this.form = { ...row, imageUrl: this.originalImageUrl };
     this.resetPreview();
     this.showFormModal = true;
   }
@@ -125,6 +130,12 @@ export class AdminProductsComponent implements OnInit {
     const name = (this.form.name || '').trim();
     if (!name) return;
 
+    // if form.imageUrl is a blob preview but user didn't actually upload a file,
+    // restore the original server image (don't persist blob: object URL).
+    if (typeof this.form.imageUrl === 'string' && /^blob:/i.test(this.form.imageUrl) && !this.selectedFile) {
+      this.form.imageUrl = this.originalImageUrl ?? '';
+    }
+
     const persist = (imageUrl?: string) => {
       if (imageUrl) this.form.imageUrl = imageUrl;
 
@@ -134,6 +145,7 @@ export class AdminProductsComponent implements OnInit {
         this.rowData = this.rowData.map(r => r.id === this.form.id ? { ...r, ...(this.form as Product) } : r);
         this.productService.updateProduct(this.form.id, this.form as Product).subscribe({
           next: (data) => {
+            console.log("Product updated:",  this.form );
             console.log("Product updated:", data);
             this.gridApi?.setGridOption('rowData', this.rowData);
             this.closeFormModal();
@@ -174,7 +186,15 @@ export class AdminProductsComponent implements OnInit {
     };
     if (this.selectedFile) {
       this.productService.uploadBlob(this.selectedFile).subscribe({
-        next: r => persist(r.url),
+        next: r => {
+          // use server returned url (never the local blob)
+          persist(r.url);
+          // revoke local preview after upload
+          if (this.previewUrl && /^blob:/i.test(this.previewUrl)) {
+            try { URL.revokeObjectURL(this.previewUrl); } catch { /* ignore */ }
+            this.previewUrl = null;
+          }
+        },
         error: err => { console.error(err); persist(); }
       });
     } else {
@@ -213,6 +233,7 @@ export class AdminProductsComponent implements OnInit {
     if (file.size > 2 * 1024 * 1024) { alert('Max 2 MB'); input.value = ''; return; }
     this.resetPreview();
     this.previewUrl = URL.createObjectURL(file);
+    // preview only — don't persist this blob URL to server, upload will replace it
     this.form.imageUrl = this.previewUrl;
     this.selectedFile = file;
   }

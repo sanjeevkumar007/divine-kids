@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
-  apiUrl: 'https://localhost:7257/api'
+  production: true,
+  apiUrl: 'https://shamafoundation.co.in/api'
 };

@@ -53,8 +53,6 @@ export const routes: Routes = [
     loadComponent: () => import('./about-me/about-me.component').then(m => m.AboutMeComponent)
   },
 
-
-
   { path: '', redirectTo: '/about-me', pathMatch: 'full' },
-  { path: '**', redirectTo: '/about-me' }
+ { path: '**', redirectTo: '' }
 ];
