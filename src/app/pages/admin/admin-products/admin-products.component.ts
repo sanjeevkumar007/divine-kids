@@ -8,6 +8,8 @@ import { ProductService } from '../../../common/services/product-service.service
 import { Category } from '../../../models/nav-models/category';
 import { CategoryService } from '../../../common/services/category-service.service';
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
+import { of } from 'rxjs';
+import { switchMap, map, catchError, finalize } from 'rxjs/operators';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
@@ -103,6 +105,7 @@ export class AdminProductsComponent implements OnInit {
   isEditForm = false;
   form: Partial<Product> = {};
   previewUrl: string | null = null;
+  isSaving = false;
 
   openAddModal() {
     this.isEditForm = false;
@@ -130,77 +133,78 @@ export class AdminProductsComponent implements OnInit {
     const name = (this.form.name || '').trim();
     if (!name) return;
 
-    // if form.imageUrl is a blob preview but user didn't actually upload a file,
-    // restore the original server image (don't persist blob: object URL).
+    // If user didn't actually upload a new file, don't persist a local blob URL
     if (typeof this.form.imageUrl === 'string' && /^blob:/i.test(this.form.imageUrl) && !this.selectedFile) {
       this.form.imageUrl = this.originalImageUrl ?? '';
     }
 
-    const persist = (imageUrl?: string) => {
-      if (imageUrl) this.form.imageUrl = imageUrl;
+    this.isSaving = true;
 
-      if (this.isEditForm && this.form.id != null) {
-        const idx = this.rowData.findIndex(r => r.id === this.form.id);
-        if (idx === -1) return;
-        this.rowData = this.rowData.map(r => r.id === this.form.id ? { ...r, ...(this.form as Product) } : r);
-        this.productService.updateProduct(this.form.id, this.form as Product).subscribe({
-          next: (data) => {
-            console.log("Product updated:",  this.form );
-            console.log("Product updated:", data);
-            this.gridApi?.setGridOption('rowData', this.rowData);
-            this.closeFormModal();
-          },
-          error: (err) => {
-            console.error("Error updating product:", err);
-          }
-        });
-      } else {
-        const nextId = (this.rowData.reduce((m, r) => Math.max(m, r.id), 0) || 0) + 1;
-        const prod: Product = {
-          id: nextId,
-          name,
-          description: this.form.description || '',
-          price: typeof this.form.price === 'number' ? this.form.price : 0,
+    this.uploadImageIfNeeded().pipe(
+      switchMap((uploadedUrl) => {
+        if (uploadedUrl) this.form.imageUrl = uploadedUrl;
 
-          imageUrl: this.form.imageUrl || '',
-          categoryId: this.form.categoryId || 0,
-          requiresShipping: false,
-          badges: [],
-          rating: 0,
-          reviews: 0,
-          inStock: false,
-          specs: {}
-        };
-        this.rowData = [prod, ...this.rowData];
-        this.productService.addProduct(prod).subscribe({
-          next: (data) => {
-            console.log("Product added:", data);
-            this.gridApi?.setGridOption('rowData', this.rowData);
-            this.closeFormModal();
-          },
-          error: (err) => {
-            console.error("Error adding product:", err);
-          }
-        });
-      }
-    };
-    if (this.selectedFile) {
-      this.productService.uploadBlob(this.selectedFile).subscribe({
-        next: r => {
-          // use server returned url (never the local blob)
-          persist(r.url);
-          // revoke local preview after upload
-          if (this.previewUrl && /^blob:/i.test(this.previewUrl)) {
-            try { URL.revokeObjectURL(this.previewUrl); } catch { /* ignore */ }
-            this.previewUrl = null;
-          }
-        },
-        error: err => { console.error(err); persist(); }
-      });
-    } else {
-      persist();
-    }
+        if (this.isEditForm && this.form.id != null) {
+          // update
+          return this.productService.updateProduct(this.form.id, this.form as Product).pipe(
+            map(result => ({ kind: 'update', result }))
+          );
+        } else {
+          // create new product (local id then send to server)
+          const nextId = (this.rowData.reduce((m, r) => Math.max(m, r.id), 0) || 0) + 1;
+          const prod: Product = {
+            id: nextId,
+            name,
+            description: this.form.description || '',
+            price: typeof this.form.price === 'number' ? this.form.price : 0,
+            imageUrl: this.form.imageUrl || '',
+            categoryId: this.form.categoryId || 0,
+            requiresShipping: false,
+            badges: [],
+            rating: 0,
+            reviews: 0,
+            inStock: false,
+            specs: {}
+          };
+          // optimistically update UI then call server
+          this.rowData = [prod, ...this.rowData];
+          this.gridApi?.setGridOption('rowData', this.rowData);
+          return this.productService.addProduct(prod).pipe(
+            map(result => ({ kind: 'add', result, prod }))
+          );
+        }
+      }),
+      finalize(() => {
+        this.isSaving = false;
+        // always revoke local preview if present
+        if (this.previewUrl && /^blob:/i.test(this.previewUrl)) {
+          try { URL.revokeObjectURL(this.previewUrl); } catch { /* ignore */ }
+          this.previewUrl = null;
+        }
+        this.selectedFile = null;
+      }),
+      catchError(err => {
+        console.error('Save flow failed:', err);
+        return of(null);
+      })
+    ).subscribe((out: any) => {
+      if (!out) return;
+      // on successful server response close modal (for add we already updated rowData optimistically)
+      console.log('Save result', out);
+      this.closeFormModal();
+    });
+  }
 
+  private uploadImageIfNeeded() {
+    if (!this.selectedFile) return of(null);
+    return this.productService.uploadBlob(this.selectedFile).pipe(
+      map(r => r.url),
+      catchError(err => {
+        console.error('Image upload failed:', err);
+        // fallback to null so product creation/update can continue without image
+        return of(null);
+      })
+    );
   }
 
   // Delete (simple confirm)

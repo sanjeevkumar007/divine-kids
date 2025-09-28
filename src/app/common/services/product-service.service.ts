@@ -1,8 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { Product } from '../../models/nav-models/product';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, of, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
+import { map, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -74,13 +76,29 @@ export class ProductService {
 
   uploadBlob(file: File): Observable<{ fileName: string; url: string }> {
     const fd = new FormData();
-    fd.append('file', file);
-    return this.http.post<{ fileName: string; url: string }>(`${this.apiBaseUrl}/Blob/UploadImage`, fd);
+    fd.append('file', file, file.name);
+
+    // adjust endpoint if your backend uses a different route
+    const uploadUrl = `${this.apiBaseUrl}/Blob/UploadImage`;
+
+    return this.http.post<any>(uploadUrl, fd).pipe(
+      map(resp => {
+        // normalize common response shapes: { url }, { data: { url } }, string, etc.
+        const raw = resp?.url ?? resp?.data?.url ?? resp?.fileUrl ?? resp ?? null;
+        const url = typeof raw === 'string' ? this.toAbsolute(raw) : '';
+        const fileName = resp?.fileName ?? file.name;
+        return { fileName, url };
+      }),
+      catchError(err => {
+        console.error('uploadBlob failed', err);
+        return throwError(() => err);
+      })
+    );
   }
 
-   toAbsolute(imageUrl: string): any {
-    if (!imageUrl) return undefined;
-    // treat fully-qualified URLs and safe schemes (http(s), //, data:, blob:) as absolute
+  // ensure toAbsolute treats blob/data/http properly
+  toAbsolute(imageUrl: string): string {
+    if (!imageUrl) return '';
     if (/^(blob:|data:|https?:\/\/|\/\/)/i.test(imageUrl)) return imageUrl;
     if (imageUrl.startsWith('/')) return this.apiRoot + imageUrl;
     return `${this.apiRoot}/${imageUrl}`;
