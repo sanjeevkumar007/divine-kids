@@ -3,10 +3,13 @@
     "",
     "\\src",
     "\\src\\app",
-    "\\src\\app\\about-me",
-    "\\src\\assets",
-    "\\src\\assets\\pdfs"
+    "\\src\\app\\common",
+    "\\src\\app\\common\\services",
+    "\\src\\app\\pages",
+    "\\src\\app\\pages\\admin",
+    "\\src\\app\\pages\\admin\\admin-categories",
+    "\\src\\app\\product"
   ],
-  "SelectedNode": "\\src\\app\\about-me\\about-me.component.html",
+  "SelectedNode": "\\src\\app\\product\\product.component.html",
   "PreviewInSolutionExplorer": false
 }

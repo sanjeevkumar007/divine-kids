@@ -12,6 +12,8 @@ import type {
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import { MainCategory } from '../../../models/nav-models/main-category';
 import { MainCategoryService } from '../../../common/services/main-category-service.service';
+import { of } from 'rxjs';
+import { switchMap, map, catchError, finalize } from 'rxjs/operators';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -31,7 +33,11 @@ export class AdminMainCategoriesComponent implements OnInit {
   rowData: MainCategoryRow[] = [];
   gridApi!: GridApi<MainCategoryRow>;
   private tempIdCounter = -1;
+
+  // Global saving + loading
   saving = false;
+  savingMessage = '';
+  loading = false;
 
   defaultColDef: ColDef<MainCategoryRow> = {
     resizable: true,
@@ -62,9 +68,11 @@ export class AdminMainCategoriesComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.refreshAll();
+    // Initial load (non-forced)
+    this.loadMainCategories(false);
   }
 
+  // OLD refreshAll kept (not used now) – consider removing later to avoid confusion
   refreshAll(showGridOverlay: boolean = false): void {
     if (showGridOverlay && this.gridApi) {
       this.gridApi.showLoadingOverlay();
@@ -86,6 +94,38 @@ export class AdminMainCategoriesComponent implements OnInit {
         if (this.gridApi) this.gridApi.hideOverlay();
       }
     });
+  }
+
+  onGridReady(e: GridReadyEvent<MainCategoryRow>) {
+    this.gridApi = e.api;
+    this.gridApi.setGridOption('pagination', true);
+    this.gridApi.setGridOption('paginationPageSize', 10);
+    setTimeout(() => this.gridApi.sizeColumnsToFit(), 0);
+    // Ensure a fresh load when grid becomes ready
+    this.loadMainCategories(false);
+  }
+
+  loadMainCategories(forceRefresh = false, after?: () => void) {
+    this.loading = true;
+    this.gridApi?.showLoadingOverlay();
+
+    this.mainCategoryService.getMainCategories(forceRefresh)
+      .pipe(finalize(() => {
+        this.loading = false;
+        after?.();
+      }))
+      .subscribe({
+        next: data => {
+          this.rowData = data;
+          if (!data.length) this.gridApi?.showNoRowsOverlay(); else this.gridApi?.hideOverlay();
+          this.gridApi?.setGridOption('rowData', this.rowData);
+          this.cdr.markForCheck(); // ensure UI updates
+        },
+        error: err => {
+          console.error('Failed to load main categories', err);
+          this.gridApi?.hideOverlay();
+        }
+      });
   }
 
   private actionsRenderer = (p: ICellRendererParams<MainCategoryRow>) => {
@@ -114,13 +154,6 @@ export class AdminMainCategoriesComponent implements OnInit {
     return wrap;
   };
 
-  onGridReady(e: GridReadyEvent<MainCategoryRow>) {
-    this.gridApi = e.api;
-    this.gridApi.setGridOption('pagination', true);
-    this.gridApi.setGridOption('paginationPageSize', 10);
-    setTimeout(() => this.gridApi.sizeColumnsToFit(), 0);
-  }
-
   onPageSizeChange(ev: Event) {
     const size = +(ev.target as HTMLSelectElement).value;
     this.gridApi?.setGridOption('paginationPageSize', size);
@@ -147,11 +180,11 @@ export class AdminMainCategoriesComponent implements OnInit {
     this.showFormModal = true;
   }
 
-  closeFormModal() {
+  closeFormModal(force = false) {
+    if (this.saving && !force) return;
     this.showFormModal = false;
     this.resetPreview();
     this.selectedFile = null;
-    this.saving = false;
     this.cdr.markForCheck();
   }
 
@@ -172,76 +205,57 @@ export class AdminMainCategoriesComponent implements OnInit {
     if (!name) return;
 
     this.saving = true;
-    this.cdr.markForCheck();
+    this.savingMessage = this.isEditForm ? 'Updating main category...' : 'Creating main category...';
+    this.closeFormModal(true);
 
-    const finalize = () => {
-      this.saving = false;
-      this.cdr.markForCheck();
-    };
-
-    const persist = (imageUrl?: string) => {
-      if (imageUrl) this.form.imageUrl = imageUrl;
-
-      if (this.isEditForm && this.form.id && this.form.id > 0) {
-        const payload: MainCategory = {
-          id: this.form.id,
-          name,
-          description: this.form.description || '',
-          imageUrl: this.form.imageUrl || '',
-          categories: []
-        };
-        this.mainCategoryService.updateMainCategory(payload.id, payload).subscribe({
-          next: res => {
-            if (!res || res.id == null) {
-              console.warn('[update] invalid response; full refresh');
-            }
-            this.ngZone.run(() => {
-              this.closeFormModal();
-              this.refreshAll(true); // always re-fetch latest
-            });
-          },
-          error: err => {
-            console.error('[updateMainCategory] error', err);
-          },
-          complete: finalize
-        });
-      } else {
-        const payload: MainCategory = {
-          id: 0,
-          name,
-          description: this.form.description || '',
-          imageUrl: this.form.imageUrl || '',
-          categories: []
-        };
-        this.mainCategoryService.addMainCategory(payload).subscribe({
-          next: res => {
-            if (!res || res.id == null || res.id <= 0) {
-              console.warn('[addMainCategory] invalid response; full refresh');
-            }
-            this.ngZone.run(() => {
-              this.closeFormModal();
-              this.refreshAll(true);
-            });
-          },
-          error: err => {
-            console.error('[addMainCategory] error', err);
-          },
-          complete: finalize
-        });
-      }
-    };
-
-    if (this.selectedFile) {
-      this.mainCategoryService.uploadBlob(this.selectedFile).subscribe({
-        next: r => persist(r?.url),
-        error: err => {
+    const upload$ = this.selectedFile
+      ? this.mainCategoryService.uploadBlob(this.selectedFile).pipe(
+        map(r => r?.url as string | undefined),
+        catchError(err => {
           console.error('[uploadBlob] error', err);
-          persist();
+          return of(undefined);
+        })
+      )
+      : of(undefined);
+
+    upload$
+      .pipe(
+        switchMap(imageUrl => {
+          if (imageUrl) this.form.imageUrl = imageUrl;
+
+          const payload: MainCategory = {
+            id: this.isEditForm && this.form.id ? this.form.id : 0,
+            name,
+            description: this.form.description || '',
+            imageUrl: this.form.imageUrl || '',
+            categories: []
+          };
+
+          return (payload.id > 0
+            ? this.mainCategoryService.updateMainCategory(payload.id, payload)
+            : this.mainCategoryService.addMainCategory(payload)
+          ).pipe(map(res => ({ res, isUpdate: payload.id > 0 })));
+        }),
+        finalize(() => {
+          this.saving = false;
+          this.savingMessage = '';
+          if (this.previewUrl) {
+            try { URL.revokeObjectURL(this.previewUrl); } catch { }
+          }
+          this.previewUrl = null;
+          this.selectedFile = null;
+          this.cdr.markForCheck();
+        })
+      )
+      .subscribe({
+        next: ({ res, isUpdate }) => {
+          // Force fresh server fetch (bypass cache)
+          this.loadMainCategories(true);
+        },
+        error: err => {
+          console.error('[saveMainCategory] error', err);
         }
       });
-    } else {
-      persist();
-    }
   }
 
   // Delete
@@ -256,17 +270,13 @@ export class AdminMainCategoriesComponent implements OnInit {
   confirmDelete() {
     if (!this.rowToDelete) { this.showDeleteModal = false; return; }
     const deleting = this.rowToDelete;
+    this.showDeleteModal = false;
+    this.rowToDelete = null;
+
     this.mainCategoryService.deleteMainCategory(deleting.id).subscribe({
-      next: () => {
-        // Simpler: full refresh to stay consistent
-        this.refreshAll(true);
-      },
+      next: () => this.loadMainCategories(true),
       error: err => console.error('[deleteMainCategory] error', err),
-      complete: () => {
-        this.rowToDelete = null;
-        this.showDeleteModal = false;
-        this.cdr.markForCheck();
-      }
+      complete: () => this.cdr.markForCheck()
     });
   }
 

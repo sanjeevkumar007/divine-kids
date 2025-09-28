@@ -1,86 +1,106 @@
 <div class="auth-bg">
-    <div class="auth-shell">
-        <div class="tabs">
-            <button (click)="switch('login')" [class.active]="mode==='login'">Login</button>
-            <button (click)="switch('register')" [class.active]="mode==='register'">Register</button>
-            <span class="glow" [class.right]="mode==='register'"></span>
-        </div>
-
-        <!-- LOGIN -->
-        <form *ngIf="mode==='login'" [formGroup]="loginForm" (ngSubmit)="submitLogin()" novalidate>
-            <h1 class="title">Welcome Back</h1>
-            <p class="subtitle">Sign in to continue.</p>
-
-            <label class="field">
-                <span>Email</span>
-                <input type="email" formControlName="email" placeholder="you@example.com">
-                <small *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">Valid email
-                    required</small>
-            </label>
-
-            <label class="field">
-                <span>Password</span>
-                <input type="password" formControlName="password" placeholder="••••••••">
-                <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">Min 6
-                    chars</small>
-            </label>
-
-            <div class="actions">
-                <button class="btn primary" type="submit" [disabled]="loginForm.invalid">Login</button>
-                <button class="btn ghost" type="button" (click)="switch('register')">Create Account</button>
-            </div>
-        </form>
-
-        <!-- REGISTER -->
-        <form *ngIf="mode==='register'" [formGroup]="registerForm" (ngSubmit)="submitRegister()" novalidate>
-            <h1 class="title">Create Account</h1>
-            <p class="subtitle">Join and explore.</p>
-
-            <label class="field">
-                <span>Name</span>
-                <input type="text" formControlName="name" placeholder="Full name">
-                <small *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">Name
-                    required</small>
-            </label>
-
-            <label class="field">
-                <span>Email</span>
-                <input type="email" formControlName="email" placeholder="you@example.com">
-                <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">Valid email
-                    required</small>
-            </label>
-
-            <label class="field">
-                <span>Phone</span>
-                <input type="phone" formControlName="phoneNumber" placeholder="(91) 456-7890">
-                <small
-                    *ngIf="registerForm.get('phoneNumber')?.invalid && registerForm.get('phoneNumber')?.touched">Valid
-                    phone
-                    required</small>
-            </label>
-
-            <div class="row-2">
-                <label class="field">
-                    <span>Password</span>
-                    <input type="password" formControlName="password" placeholder="••••••••">
-                    <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">Min 6
-                        chars</small>
-                </label>
-
-                <label class="field">
-                    <span>Confirm</span>
-                    <input type="password" formControlName="confirm" placeholder="Repeat">
-                    <small *ngIf="registerForm.get('confirm')?.errors?.['mismatch']">Does not match</small>
-                    <small
-                        *ngIf="registerForm.get('confirm')?.invalid && registerForm.get('confirm')?.touched && !registerForm.get('confirm')?.errors?.['mismatch']">Required</small>
-                </label>
-            </div>
-
-            <div class="actions">
-                <button class="btn primary" type="submit" (click)="submitRegister()"
-                    [disabled]="registerForm.invalid">Register</button>
-                <button class="btn ghost" type="button" (click)="switch('login')">Have an account?</button>
-            </div>
-        </form>
+  <div class="auth-shell">
+    <div class="tabs">
+      <button (click)="switch('login')" [class.active]="mode==='login'">Login</button>
+      <button (click)="switch('register')" [class.active]="mode==='register'">Register</button>
+      <span class="glow" [class.right]="mode==='register'"></span>
     </div>
+
+    <!-- LOGIN -->
+    <form *ngIf="mode==='login'" [formGroup]="loginForm" (ngSubmit)="submitLogin()" novalidate>
+      <h1 class="title">Welcome Back</h1>
+      <p class="subtitle">Sign in to continue.</p>
+
+      <label class="field">
+        <span>Email</span>
+        <input type="email" formControlName="email" placeholder="you@example.com">
+        <small *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Valid email
+          required
+        </small>
+      </label>
+
+      <label class="field">
+        <span>Password</span>
+        <input type="password" formControlName="password" placeholder="••••••••">
+        <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Min 6
+          chars
+        </small>
+      </label>
+
+      <div class="actions">
+        <button class="btn primary" type="submit" [disabled]="loginForm.invalid">Login</button>
+        <button class="btn ghost" type="button" (click)="switch('register')">Create Account</button>
+      </div>
+    </form>
+
+    <!-- REGISTER -->
+    <form *ngIf="mode==='register'" [formGroup]="registerForm" (ngSubmit)="submitRegister()" novalidate>
+      <h1 class="title">Create Account</h1>
+      <p class="subtitle">Join and explore.</p>
+
+      <label class="field">
+        <span>Name</span>
+        <input type="text" formControlName="name" placeholder="Full name">
+        <small *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
+          Name
+          required
+        </small>
+      </label>
+
+      <label class="field">
+        <span>Email</span>
+        <input type="email" formControlName="email" placeholder="you@example.com">
+        <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+          Valid email
+          required
+        </small>
+      </label>
+
+      <label class="field">
+        <span>Phone</span>
+        <input type="phone" formControlName="phoneNumber" placeholder="(91) 456-7890">
+        <small *ngIf="registerForm.get('phoneNumber')?.invalid && registerForm.get('phoneNumber')?.touched">
+          Valid
+          phone
+          required
+        </small>
+      </label>
+
+      <div class="row-2">
+        <label class="field">
+          <span>Password</span>
+          <input type="password" formControlName="password" placeholder="••••••••">
+          <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+            Min 6
+            chars
+          </small>
+        </label>
+
+        <label class="field">
+          <span>Confirm</span>
+          <input type="password" formControlName="confirm" placeholder="Repeat">
+          <small *ngIf="registerForm.get('confirm')?.errors?.['mismatch']">Does not match</small>
+          <small *ngIf="registerForm.get('confirm')?.invalid && registerForm.get('confirm')?.touched && !registerForm.get('confirm')?.errors?.['mismatch']">Required</small>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" type="submit" (click)="submitRegister()"
+                [disabled]="registerForm.invalid">
+          Register
+        </button>
+        <button class="btn ghost" type="button" (click)="switch('login')">Have an account?</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Loading / processing overlay -->
+<div class="processing-overlay" *ngIf="submitting" aria-live="assertive" aria-busy="true">
+  <div class="processing-box" role="alert" aria-label="Processing">
+    <div class="spinner"></div>
+    <p>{{ processingMessage }}</p>
+  </div>
 </div>

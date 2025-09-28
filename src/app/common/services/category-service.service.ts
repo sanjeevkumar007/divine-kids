@@ -36,18 +36,28 @@ export class CategoryService {
     return this.http.get<Category>(`${this.apiBaseUrl}/Category/GetAsync/${categoryId}`);
   }
 
-  addCategory(category: Category): Observable<Category> {
-    return this.http.post<Category>(`${this.apiBaseUrl}/Category/AddAsync`, category).pipe(
+  clearCache() { this.categories = null; }
+
+  addCategory(category: Category): Observable<Category | null> {
+    return this.http.post<Category | null>(`${this.apiBaseUrl}/Category/AddAsync`, category).pipe(
       tap(newCategory => {
-        this.categories = this.categories ? [...this.categories, newCategory] : [newCategory];
+        if (!newCategory) { // empty/204 response
+          this.categories = null; // force a reload next time
+        } else {
+          this.categories = this.categories ? [...this.categories, newCategory] : [newCategory];
+        }
       })
     );
   }
 
-  updateCategory(categoryId: number, category: Category): Observable<Category> {
-    return this.http.put<Category>(`${this.apiBaseUrl}/Category/UpdateAsync/${categoryId}`, category).pipe(
-      tap(updatedCategory => {
-        this.categories = this.categories?.map(cat => cat.id === categoryId ? updatedCategory : cat) || null;
+  updateCategory(categoryId: number, category: Category): Observable<Category | null> {
+    return this.http.put<Category | null>(`${this.apiBaseUrl}/Category/UpdateAsync/${categoryId}`, category).pipe(
+      tap(updated => {
+        if (!updated) {
+          this.categories = null;
+        } else {
+            this.categories = (this.categories || []).map(c => c.id === categoryId ? updated : c);
+        }
       })
     );
   }

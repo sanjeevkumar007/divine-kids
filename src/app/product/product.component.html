@@ -64,7 +64,7 @@
                         <span class="reviews">({{ p.reviews || 0 }})</span>
                     </div>
                     <div class="price-row">
-                        <span class="price">${{ p.price }}</span>
+                      <span class="price">₹{{ p.price }}</span>
                         <span class="stock" [class.in]="p.inStock" [class.out]="!p.inStock">
                             {{ p.inStock ? 'In stock' : 'Out of stock' }}
                         </span>

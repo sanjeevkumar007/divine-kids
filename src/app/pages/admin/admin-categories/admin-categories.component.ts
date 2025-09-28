@@ -2,16 +2,15 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef, GridApi, GridReadyEvent, ICellRendererParams, CellClickedEvent } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent, CellClickedEvent } from 'ag-grid-community';
 import { CategoryService } from '../../../common/services/category-service.service';
 import { Category } from '../../../models/nav-models/category';
 import { MainCategory } from '../../../models/nav-models/main-category';
 import { MainCategoryService } from '../../../common/services/main-category-service.service';
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
-import { environment } from '../../../../environments/environment.development';
+import { finalize } from 'rxjs/operators';
+
 ModuleRegistry.registerModules([AllCommunityModule]);
-type Status = 'Active' | 'Inactive';
-const apiBaseUrl = environment.apiUrl;
 
 @Component({
   standalone: true,
@@ -23,55 +22,19 @@ export class AdminCategoriesComponent implements OnInit {
 
   private categoryServices = inject(CategoryService);
   private mainCategoryService = inject(MainCategoryService);
-  // Seed data
-  rowData: Category[] = [
-  ];
 
+  rowData: Category[] = [];
   mainCategories: MainCategory[] = [];
 
-  ngOnInit(): void {
-    this.categoryServices.getCategories().subscribe(data => {
-      this.rowData = data;
-    });
-
-    this.mainCategoryService.getMainCategories().subscribe(data => {
-      this.mainCategories = data;
-    });
-
-  }
-
-  // Grid
   gridApi!: GridApi<Category>;
+  loading = false;
+  saving = false;
+  savingMessage = '';
+
   columnDefs: ColDef<Category>[] = [
     { headerName: 'ID', field: 'id', maxWidth: 90, sortable: true, filter: 'agNumberColumnFilter' },
-    // {
-    //   headerName: 'Image',
-    //   field: 'imageUrl',
-    //   maxWidth: 110,
-    //   filter: false,
-    //   cellRenderer: (p: ICellRendererParams<Category>) => {
-    //     const wrap = document.createElement('div');
-    //     wrap.style.display = 'grid';
-    //     wrap.style.placeItems = 'center';
-    //     const img = document.createElement('img');
-    //     img.src = p.value || '';
-    //     img.alt = p.data?.name || '';
-    //     img.width = 40; img.height = 40;
-    //     img.style.objectFit = 'cover';
-    //     img.style.borderRadius = '8px';
-    //     img.style.border = '1px solid rgba(0,0,0,.15)';
-    //     wrap.appendChild(img);
-    //     return wrap;
-    //   },
-    // },
     { headerName: 'Name', field: 'name', sortable: true, filter: true, minWidth: 160, flex: 1 },
     { headerName: 'Description', field: 'description', sortable: true, filter: true, minWidth: 200, flex: 1 },
-    // {
-    //   headerName: 'Status',
-    //   field: 'status',
-    //   maxWidth: 140,
-    //   filter: 'agSetColumnFilter',
-    // },
     {
       headerName: 'Action',
       maxWidth: 200,
@@ -79,7 +42,7 @@ export class AdminCategoriesComponent implements OnInit {
       filter: false,
       cellRenderer: () => `
         <div class="dk-actions">
-          <button type="button" class="btn btn-sm btn-outline-secondary" data-action="edit">Edit</button>
+          <button type="button" style="margin-right:5px;" class="btn btn-sm btn-outline-secondary" data-action="edit">Edit</button>
           <button type="button" class="btn btn-sm btn-outline-danger" data-action="delete">Delete</button>
         </div>
       `,
@@ -87,9 +50,15 @@ export class AdminCategoriesComponent implements OnInit {
   ];
   defaultColDef: ColDef<Category> = { resizable: true, sortable: true, filter: true, minWidth: 120 };
 
+  ngOnInit(): void {
+    this.mainCategoryService.getMainCategories().subscribe(data => {
+      this.mainCategories = data;
+    });
+  }
+
   onGridReady(e: GridReadyEvent<Category>) {
     this.gridApi = e.api;
-    // Delegate Action button clicks
+
     this.gridApi.addEventListener('cellClicked', (evt: CellClickedEvent<Category>) => {
       if (evt.colDef?.headerName !== 'Action') return;
       const btn = (evt.event?.target as HTMLElement)?.closest('button[data-action]');
@@ -98,10 +67,35 @@ export class AdminCategoriesComponent implements OnInit {
       if (action === 'edit') this.openEditModal(evt.data as Category);
       if (action === 'delete') this.askDelete(evt.data as Category);
     });
+
     setTimeout(() => this.gridApi.sizeColumnsToFit(), 0);
+    this.loadCategories();
   }
 
-  // Modal state
+  // Accepts optional callback to run after loading completes
+  loadCategories(forceRefresh = false, after?: () => void) {
+    this.loading = true;
+    this.gridApi?.showLoadingOverlay();
+
+    this.categoryServices.getCategories(forceRefresh)
+      .pipe(finalize(() => {
+        this.loading = false;
+        after?.();
+      }))
+      .subscribe({
+        next: data => {
+          this.rowData = data;
+          if (!data.length) this.gridApi?.showNoRowsOverlay(); else this.gridApi?.hideOverlay();
+          this.gridApi?.setGridOption('rowData', this.rowData);
+        },
+        error: err => {
+          console.error('Failed to load categories', err);
+          this.gridApi?.hideOverlay();
+        }
+      });
+  }
+
+  // Modal / form state
   showFormModal = false;
   isEditForm = false;
   form: Partial<Category> = {};
@@ -109,7 +103,7 @@ export class AdminCategoriesComponent implements OnInit {
 
   openAddModal() {
     this.isEditForm = false;
-    this.form = { name: '', description: '', imageUrl: '' };
+    this.form = { name: '', description: '', imageUrl: '', mainCategoryId: undefined };
     this.resetPreview();
     this.showFormModal = true;
   }
@@ -121,49 +115,42 @@ export class AdminCategoriesComponent implements OnInit {
     this.showFormModal = true;
   }
 
-  closeFormModal() {
+  // Replace your closeFormModal with a force option:
+  closeFormModal(force = false) {
+    if (this.saving && !force) return; // keep old behavior unless forcing
     this.showFormModal = false;
     this.resetPreview();
   }
 
   saveCategory(ev: Event) {
     ev.preventDefault();
+    if (this.saving) return;
+
     const name = (this.form.name || '').trim();
     if (!name) return;
 
-    if (this.isEditForm && this.form.id != null) {
-      this.rowData = this.rowData.map(r => r.id === this.form.id ? { ...r, ...(this.form as Category) } : r);
+    this.saving = true;
+    const isEdit = this.isEditForm && this.form.id != null;
 
-      this.categoryServices.updateCategory(this.form.id, this.form as Category).subscribe({
-        next: (data) => {
-          console.log("Category updated:", data);
-        },
-        error: (err) => {
-          console.error("Error updating category:", err);
-        }
-      });
-    } else {
-      const nextId = (this.rowData.reduce((m, r) => Math.max(m, r.id), 0) || 0) + 1;
-      const cat: Category = {
-        id: nextId,
-        name,
-        description: this.form.description || '',
-        imageUrl: this.form.imageUrl || '',
-        mainCategoryId: this.form.mainCategoryId || 0,
-        products: [],
-      };
-      this.rowData = [cat, ...this.rowData];
-      this.categoryServices.addCategory(cat).subscribe({
-        next: (data) => {
-          console.log("Category added:", data);
-        }, error: (err) => {
-          console.error("Error adding category:", err);
-        }
-      });
-    }
+    const request$ = isEdit
+      ? this.categoryServices.updateCategory(this.form.id!, this.form as Category)
+      : this.categoryServices.addCategory(this.form as Category);
 
-    this.gridApi?.setGridOption('rowData', this.rowData);
-    this.closeFormModal();
+    request$.subscribe({
+      next: () => {
+        // Close even while saving (force = true)
+        this.closeFormModal(true);
+
+        // After successful save force a fresh GET (bypass cache)
+        this.loadCategories(true, () => {
+          this.saving = false;
+        });
+      },
+      error: err => {
+        console.error('Save failed', err);
+        this.saving = false;
+      }
+    });
   }
 
   // Delete confirm
@@ -172,10 +159,18 @@ export class AdminCategoriesComponent implements OnInit {
   askDelete(row: Category) { this.rowToDelete = row; this.showDeleteModal = true; }
   confirmDelete() {
     if (!this.rowToDelete) { this.showDeleteModal = false; return; }
-    this.rowData = this.rowData.filter(r => r.id !== this.rowToDelete!.id);
-    this.gridApi?.setGridOption('rowData', this.rowData);
-    this.rowToDelete = null;
+    const id = this.rowToDelete.id;
     this.showDeleteModal = false;
+    this.rowToDelete = null;
+
+    // Optimistic removal
+    this.rowData = this.rowData.filter(r => r.id !== id);
+    this.gridApi?.setGridOption('rowData', this.rowData);
+
+    this.categoryServices.deleteCategoryById(id).subscribe({
+      next: () => this.loadCategories(),
+      error: err => console.error('Delete failed', err)
+    });
   }
 
   // Upload

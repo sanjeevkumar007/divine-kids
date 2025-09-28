@@ -237,3 +237,266 @@
         opacity: 1;
     }
 }
+
+/* new chagnes */
+
+/* Existing styles kept above (unchanged) */
+.dk-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
+
+.dk-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .55);
+  display: grid;
+  place-items: center;
+  z-index: 2000;
+}
+
+.dk-modal {
+  width: 100%;
+  max-width: 760px;
+  background: #0e639c;
+  color: #181c19;
+  border: 1px solid #1f2a24;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, .4);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  animation: dk-pop .14s ease-out;
+}
+
+.dk-modal-sm {
+  max-width: 420px;
+}
+
+.dk-modal-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: #0e639c;
+  border-bottom: 1px solid #1f2a24;
+  color: #fff;
+}
+
+.dk-modal-body {
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.dk-modal-footer {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid #1f2a24;
+}
+
+.dk-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: transparent;
+  color: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+  .dk-close-btn:hover {
+    background: rgba(255,255,255,.08);
+  }
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+  .field > label {
+    font-size: 12px;
+    color: #040e09;
+  }
+
+  .field > input,
+  .field > textarea,
+  .field > select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #1f2a24;
+    border-radius: 10px;
+    background: #dbdedc;
+    color: #1b231d;
+    outline: none;
+  }
+
+  .field > textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hidden-file {
+  display: none;
+}
+
+.muted {
+  color: #a6b4ad;
+  font-size: 12px;
+}
+
+.dk-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid #1f2a24;
+  border-radius: 12px;
+  background: #dbdedc;
+}
+
+  .dk-preview img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #1f2a24;
+  }
+
+.dk-avatar {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(255,255,255,.06);
+  font-weight: 700;
+}
+
+.dk-meta .title {
+  font-weight: 600;
+}
+
+.dk-meta .desc {
+  font-size: 12px;
+  color: #4a5951;
+}
+
+.btn {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111827;
+  cursor: pointer;
+}
+
+  .btn:hover {
+    background: #f9fafb;
+  }
+
+  .btn.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+.btn-primary {
+  border-color: #4f80ff;
+  color: #fff;
+  background: linear-gradient(180deg,#3f7dfb,#2867f6);
+}
+
+.btn-light {
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+}
+
+.btn-danger {
+  background: #fee2e2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+@keyframes dk-pop {
+  from {
+    transform: translateY(6px) scale(.98);
+    opacity: .6;
+  }
+
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Global saving overlay (matches other admin screens) */
+.dk-saving-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1600;
+  backdrop-filter: blur(2px);
+}
+
+.dk-saving-box {
+  background: #ffffff;
+  padding: 1.5rem 2.25rem;
+  border-radius: 14px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+  text-align: center;
+  min-width: 240px;
+  font-family: system-ui, Arial, sans-serif;
+}
+
+  .dk-saving-box p {
+    margin: 0.9rem 0 0;
+    font-size: 0.95rem;
+    color: #333;
+    letter-spacing: .4px;
+  }
+
+.dk-saving-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #d9d9d9;
+  border-top-color: #3f51b5;
+  border-radius: 50%;
+  animation: dk-spin .85s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes dk-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}

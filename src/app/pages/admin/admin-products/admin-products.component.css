@@ -127,3 +127,54 @@
     gap: 8px;
     align-items: center;
 }
+
+/*product popup*/
+
+.dk-saving-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1600;
+  backdrop-filter: blur(2px);
+}
+
+.dk-saving-box {
+  background: #ffffff;
+  padding: 1.5rem 2.25rem;
+  border-radius: 14px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+  text-align: center;
+  min-width: 240px;
+  font-family: system-ui, Arial, sans-serif;
+}
+
+  .dk-saving-box p {
+    margin: 0.9rem 0 0;
+    font-size: 0.95rem;
+    color: #333;
+    letter-spacing: .4px;
+  }
+
+.dk-saving-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #d9d9d9;
+  border-top-color: #3f51b5;
+  border-radius: 50%;
+  animation: dk-spin .85s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes dk-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}

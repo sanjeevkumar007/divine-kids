@@ -3,9 +3,9 @@ import { FormBuilder, Validators, ReactiveFormsModule, FormGroup, AbstractContro
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../common/auth-service.service';
 import { Register } from '../models/register';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { User } from '../models/accounts/User';
-
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-auth',
@@ -14,7 +14,6 @@ import { User } from '../models/accounts/User';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-
 export class AuthComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -26,9 +25,9 @@ export class AuthComponent {
   loginForm!: FormGroup;
   registerForm!: FormGroup;
 
-  // made public for template binding
   submitting = false;
-  // If later you want separate flags, add: loginSubmitting = false; registerSubmitting = false;
+  private awaitingNavigation = false;
+  processingMessage = 'Signing you in...';
 
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -43,6 +42,16 @@ export class AuthComponent {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirm: ['', [Validators.required]]
     }, { validators: this.passwordsMatch });
+
+    // Turn off spinner only after the navigation triggered by login completes.
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this.awaitingNavigation) {
+          this.submitting = false;
+          this.awaitingNavigation = false;
+        }
+      });
   }
 
   private passwordsMatch(group: AbstractControl): ValidationErrors | null {
@@ -61,55 +70,25 @@ export class AuthComponent {
       return;
     }
 
+    this.processingMessage = 'Signing you in...';
     this.submitting = true;
+    this.awaitingNavigation = true;
 
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
         console.log('[AuthComponent] login success token:', this.authService.token);
-        this.submitting = false; // in case navigation is delayed
+        // Navigate; spinner will stop after NavigationEnd.
         this.router.navigate(['/admin/main-categories']);
       },
       error: e => {
         console.error('[AuthComponent] login error', e);
         this.submitting = false;
+        this.awaitingNavigation = false;
       }
     });
   }
 
   submitRegister() {
-    if (this.submitting) return;
-
-    if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
-      return;
-    }
-
-    if (this.registerForm.value.password !== this.registerForm.value.confirm) {
-      this.registerForm.get('confirm')?.setErrors({ mismatch: true });
-      return;
-    }
-
-    this.submitting = true;
-
-    this.registerData = {
-      phoneNumber: this.registerForm.value.phoneNumber,
-      confirm: this.registerForm.value.confirm,
-      name: this.registerForm.value.name,
-      email: this.registerForm.value.email,
-      password: this.registerForm.value.password
-    };
-
-    this.authService.register(this.registerData).subscribe({
-      next: () => {
-        console.log('[AuthComponent] register ok');
-        this.submitting = false;
-        this.switch('login');
-        this.loginForm.patchValue({ email: this.registerData?.email });
-      },
-      error: e => {
-        console.error('[AuthComponent] register error', e);
-        this.submitting = false;
-      }
-    });
+    console.log('disabled');
   }
 }

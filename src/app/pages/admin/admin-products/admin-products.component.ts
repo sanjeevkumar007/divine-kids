@@ -18,17 +18,17 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   templateUrl: './admin-products.component.html',
   styleUrls: ['./admin-products.component.css'],
 })
-
 export class AdminProductsComponent implements OnInit {
 
-  private productService = inject(ProductService)
-  private categoryService = inject(CategoryService)
+  private productService = inject(ProductService);
+  private categoryService = inject(CategoryService);
 
-  // preserve original server image when editing so we don't save blob: URLs
+  loading = false;
+  saving = false;
+  savingMessage = '';
+
   originalImageUrl: string | null = null;
-
   selectedFile: File | null = null;
-  mainCategoryService: any;
 
   ngOnInit(): void {
     this.productService.getProducts().subscribe(data => {
@@ -39,10 +39,9 @@ export class AdminProductsComponent implements OnInit {
       this.categories = data;
     });
   }
-  // Data
-  rowData: Product[] = [
-  ];
 
+  // Data
+  rowData: Product[] = [];
   categories: Category[] = [];
 
   // Grid
@@ -98,6 +97,28 @@ export class AdminProductsComponent implements OnInit {
       if (action === 'delete') this.askDelete(evt.data as Product);
     });
     setTimeout(() => this.gridApi.sizeColumnsToFit(), 0);
+    this.loadProducts();
+  }
+
+  loadProducts(forceRefresh = false, after?: () => void) {
+    this.loading = true;
+    this.gridApi?.showLoadingOverlay();
+    this.productService.getProducts(forceRefresh)
+      .pipe(finalize(() => {
+        this.loading = false;
+        after?.();
+      }))
+      .subscribe({
+        next: data => {
+          this.rowData = data;
+          if (!data.length) this.gridApi?.showNoRowsOverlay(); else this.gridApi?.hideOverlay();
+          this.gridApi?.setGridOption('rowData', this.rowData);
+        },
+        error: err => {
+          console.error('Failed to load products', err);
+          this.gridApi?.hideOverlay();
+        }
+      });
   }
 
   // Modal state
@@ -105,7 +126,6 @@ export class AdminProductsComponent implements OnInit {
   isEditForm = false;
   form: Partial<Product> = {};
   previewUrl: string | null = null;
-  isSaving = false;
 
   openAddModal() {
     this.isEditForm = false;
@@ -116,83 +136,93 @@ export class AdminProductsComponent implements OnInit {
 
   openEditModal(row: Product) {
     this.isEditForm = true;
-    // keep server URL separately so we can fall back when user didn't upload a new file
     this.originalImageUrl = row.imageUrl ?? null;
     this.form = { ...row, imageUrl: this.originalImageUrl };
     this.resetPreview();
     this.showFormModal = true;
   }
 
-  closeFormModal() {
+  // Allow force close while saving (pattern like categories)
+  closeFormModal(force = false) {
+    if (this.saving && !force) return;
     this.showFormModal = false;
     this.resetPreview();
   }
 
   saveProduct(ev: Event) {
     ev.preventDefault();
+    if (this.saving) return;
+
     const name = (this.form.name || '').trim();
     if (!name) return;
 
-    // If user didn't actually upload a new file, don't persist a local blob URL
+    // Start saving overlay
+    this.saving = true;
+    this.savingMessage = this.isEditForm ? 'Updating product...' : 'Creating product...';
+
+    // Close modal immediately so overlay is visible
+    this.closeFormModal(true);
+
+    // If user didn't upload a new file, avoid keeping blob: URL
     if (typeof this.form.imageUrl === 'string' && /^blob:/i.test(this.form.imageUrl) && !this.selectedFile) {
       this.form.imageUrl = this.originalImageUrl ?? '';
     }
 
-    this.isSaving = true;
+    this.uploadImageIfNeeded()
+      .pipe(
+        switchMap((uploadedUrl) => {
+          if (uploadedUrl) this.form.imageUrl = uploadedUrl;
 
-    this.uploadImageIfNeeded().pipe(
-      switchMap((uploadedUrl) => {
-        if (uploadedUrl) this.form.imageUrl = uploadedUrl;
-
-        if (this.isEditForm && this.form.id != null) {
-          // update
-          return this.productService.updateProduct(this.form.id, this.form as Product).pipe(
-            map(result => ({ kind: 'update', result }))
-          );
-        } else {
-          // create new product (local id then send to server)
-          const nextId = (this.rowData.reduce((m, r) => Math.max(m, r.id), 0) || 0) + 1;
-          const prod: Product = {
-            id: nextId,
-            name,
-            description: this.form.description || '',
-            price: typeof this.form.price === 'number' ? this.form.price : 0,
-            imageUrl: this.form.imageUrl || '',
-            categoryId: this.form.categoryId || 0,
-            requiresShipping: false,
-            badges: [],
-            rating: 0,
-            reviews: 0,
-            inStock: false,
-            specs: {}
-          };
-          // optimistically update UI then call server
-          this.rowData = [prod, ...this.rowData];
-          this.gridApi?.setGridOption('rowData', this.rowData);
-          return this.productService.addProduct(prod).pipe(
-            map(result => ({ kind: 'add', result, prod }))
-          );
-        }
-      }),
-      finalize(() => {
-        this.isSaving = false;
-        // always revoke local preview if present
-        if (this.previewUrl && /^blob:/i.test(this.previewUrl)) {
-          try { URL.revokeObjectURL(this.previewUrl); } catch { /* ignore */ }
+          if (this.isEditForm && this.form.id != null) {
+            return this.productService.updateProduct(this.form.id, this.form as Product).pipe(
+              map(result => ({ kind: 'update', result }))
+            );
+          } else {
+            const nextId = (this.rowData.reduce((m, r) => Math.max(m, r.id), 0) || 0) + 1;
+            const prod: Product = {
+              id: nextId,
+              name,
+              description: this.form.description || '',
+              price: typeof this.form.price === 'number' ? this.form.price : 0,
+              imageUrl: this.form.imageUrl || '',
+              categoryId: this.form.categoryId || 0,
+              requiresShipping: false,
+              badges: [],
+              rating: 0,
+              reviews: 0,
+              inStock: false,
+              specs: {}
+            };
+            // Optimistic UI
+            this.rowData = [prod, ...this.rowData];
+            this.gridApi?.setGridOption('rowData', this.rowData);
+            return this.productService.addProduct(prod).pipe(
+              map(result => ({ kind: 'add', result, prod }))
+            );
+          }
+        }),
+        finalize(() => {
+          // End saving
+          this.saving = false;
+          this.savingMessage = '';
+          // Cleanup preview
+          if (this.previewUrl && /^blob:/i.test(this.previewUrl)) {
+            try { URL.revokeObjectURL(this.previewUrl); } catch { /* ignore */ }
+          }
           this.previewUrl = null;
-        }
-        this.selectedFile = null;
-      }),
-      catchError(err => {
-        console.error('Save flow failed:', err);
-        return of(null);
-      })
-    ).subscribe((out: any) => {
-      if (!out) return;
-      // on successful server response close modal (for add we already updated rowData optimistically)
-      console.log('Save result', out);
-      this.closeFormModal();
-    });
+          this.selectedFile = null;
+        }),
+        catchError(err => {
+          console.error('Save flow failed:', err);
+          return of(null);
+        })
+      )
+      .subscribe(out => {
+        if (!out) return;
+        console.log('Save result', out);
+        // Refresh server data after successful save to ensure consistency (especially for update)
+        this.loadProducts(true);
+      });
   }
 
   private uploadImageIfNeeded() {
@@ -201,13 +231,12 @@ export class AdminProductsComponent implements OnInit {
       map(r => r.url),
       catchError(err => {
         console.error('Image upload failed:', err);
-        // fallback to null so product creation/update can continue without image
         return of(null);
       })
     );
   }
 
-  // Delete (simple confirm)
+  // Delete
   showDeleteModal = false;
   rowToDelete: Product | null = null;
   askDelete(row: Product) { this.rowToDelete = row; this.showDeleteModal = true; }
@@ -216,20 +245,16 @@ export class AdminProductsComponent implements OnInit {
     const id = this.rowToDelete.id;
     this.productService.deleteProduct(id).subscribe({
       next: () => {
-        console.log("Product deleted:", id);
-        this.rowData = this.rowData.filter(r => r.id !== this.rowToDelete!.id);
+        console.log('Product deleted:', id);
+        this.rowData = this.rowData.filter(r => r.id !== id);
         this.gridApi?.setGridOption('rowData', this.rowData);
       },
-      error: (err) => {
-        console.error("Error deleting product:", err);
-      }
+      error: (err) => console.error('Error deleting product:', err)
     });
-
     this.rowToDelete = null;
     this.showDeleteModal = false;
   }
 
-  // Upload
   onFileSelected(e: Event) {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -237,13 +262,14 @@ export class AdminProductsComponent implements OnInit {
     if (file.size > 2 * 1024 * 1024) { alert('Max 2 MB'); input.value = ''; return; }
     this.resetPreview();
     this.previewUrl = URL.createObjectURL(file);
-    // preview only — don't persist this blob URL to server, upload will replace it
     this.form.imageUrl = this.previewUrl;
     this.selectedFile = file;
   }
 
   private resetPreview() {
-    if (this.previewUrl) URL.revokeObjectURL(this.previewUrl);
+    if (this.previewUrl) {
+      try { URL.revokeObjectURL(this.previewUrl); } catch { /* ignore */ }
+    }
     this.previewUrl = null;
   }
 }

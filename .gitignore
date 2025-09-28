@@ -62,3 +62,4 @@ Thumbs.db
 *.db-shm
 /.vs/Client
 /.vs/slnx.sqlite
+*.sqlite-journal

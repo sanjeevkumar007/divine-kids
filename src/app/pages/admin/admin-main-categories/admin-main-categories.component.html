@@ -4,12 +4,13 @@
   <button type="button" class="btn btn-primary" (click)="openAddModal()">+ Add Main Category</button>
 </div>
 
-<ag-grid-angular class="ag-theme-alpine"
+<ag-grid-angular class="ag-theme-balham"
                  style="width:100%;height:600px"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"
                  [defaultColDef]="defaultColDef"
                  [getRowId]="getRowId"
+                 [theme]="'legacy'"
                  (gridReady)="onGridReady($event)">
 </ag-grid-angular>
 
@@ -58,18 +59,8 @@
       <button type="button" class="btn btn-light" (click)="closeFormModal()" [disabled]="saving">Cancel</button>
       <button type="submit" class="btn btn-primary" [disabled]="saving || !(form.name && form.name.trim())">
         <span *ngIf="!saving">Save</span>
-        <span *ngIf="saving" class="btn-spinner">
-          <span class="spinner"></span> Saving...
-        </span>
+        <span *ngIf="saving" class="btn-spinner"><span class="spinner"></span> Saving...</span>
       </button>
-    </div>
-
-    <!-- Modal saving overlay -->
-    <div class="saving-overlay" *ngIf="saving" aria-hidden="true">
-      <div class="saving-box">
-        <div class="saving-spinner spinner-lg"></div>
-        <div class="saving-text">Saving...</div>
-      </div>
     </div>
   </form>
 </div>
@@ -86,5 +77,13 @@
       <button type="button" class="btn btn-light" (click)="showDeleteModal=false" [disabled]="saving">Cancel</button>
       <button type="button" class="btn btn-danger" (click)="confirmDelete()" [disabled]="saving">Delete</button>
     </div>
+  </div>
+</div>
+
+<!-- Global saving overlay -->
+<div class="dk-saving-overlay" *ngIf="saving" aria-live="assertive" aria-busy="true">
+  <div class="dk-saving-box" role="alert">
+    <div class="dk-saving-spinner"></div>
+    <p>{{ savingMessage || 'Saving...' }}</p>
   </div>
 </div>

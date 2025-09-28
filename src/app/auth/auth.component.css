@@ -304,3 +304,52 @@ form {
 
     /* Keep previous CSS below unchanged */
 }
+
+.processing-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  backdrop-filter: blur(2px);
+}
+
+.processing-box {
+  background: #fff;
+  padding: 1.75rem 2.25rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  text-align: center;
+  min-width: 240px;
+  font-family: system-ui, Arial, sans-serif;
+}
+
+  .processing-box p {
+    margin: 0.75rem 0 0;
+    font-size: .95rem;
+    color: #333;
+    letter-spacing: .5px;
+  }
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #e3e3e3;
+  border-top-color: #3f51b5;
+  border-radius: 50%;
+  animation: spin .9s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+button[disabled], button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
