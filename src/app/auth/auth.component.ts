@@ -76,12 +76,9 @@ export class AuthComponent {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-        console.log('[AuthComponent] login success token:', this.authService.token);
-        // Navigate; spinner will stop after NavigationEnd.
         this.router.navigate(['/admin/main-categories']);
       },
       error: e => {
-        console.error('[AuthComponent] login error', e);
         this.submitting = false;
         this.awaitingNavigation = false;
       }

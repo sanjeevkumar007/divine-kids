@@ -3,13 +3,11 @@
     "",
     "\\src",
     "\\src\\app",
-    "\\src\\app\\common",
-    "\\src\\app\\common\\services",
     "\\src\\app\\pages",
     "\\src\\app\\pages\\admin",
     "\\src\\app\\pages\\admin\\admin-categories",
-    "\\src\\app\\product"
+    "\\src\\app\\pages\\admin\\admin-main-categories"
   ],
-  "SelectedNode": "\\src\\app\\product\\product.component.html",
+  "SelectedNode": "\\src\\app\\pages\\admin\\admin-categories\\admin-categories.component.ts",
   "PreviewInSolutionExplorer": false
 }

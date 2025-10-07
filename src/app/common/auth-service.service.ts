@@ -35,7 +35,6 @@ export class AuthService {
         if (user) {
           this.currentUser.set(user);
           const tk = (user as any)?.token || (user as any)?.accessToken || (user as any)?.jwt || (user as any)?.data?.token;
-          console.log('[AuthService] picked token:', tk);
           if (tk) this.storeToken(tk);
         }
       })
